@@ -58,7 +58,7 @@ def remove(update: Update, context: CallbackContext) -> None:
 
 
 def invalid_message(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('This option is not valid'
+    update.message.reply_text('This option is not valid.\n'
                               'use /start to see the option menu.')
 
 
