@@ -29,20 +29,8 @@ class TelegramThread(threading.Thread):
 
 
 if __name__ == "__main__":
-    flask_thread = FlaskThread()
-    flask_thread.start()
-    # bot_thread = TelegramThread()
-    # bot_thread.start()
+    # flask_thread = FlaskThread()
+    # flask_thread.start()
+    bot_thread = TelegramThread()
+    bot_thread.start()
 
-    db.create_all()
-
-    from models import User
-
-    admin = User(username='admin', id=1)
-    guest = User(username='guest', id=2)
-
-    from app import db
-    # db.session.add(admin)
-    # db.session.add(guest)
-    # db.session.commit()
-    print(User.query.filter_by(username='admin'))

@@ -1,7 +1,8 @@
-import logging
-
+import requests
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+
+from config import HOME_PAGE
 
 TOKEN = '5000025980:AAEd8VB5A30jAC48vIaYQJIg3zup9q2GbqM'
 
@@ -9,35 +10,56 @@ TOKEN = '5000025980:AAEd8VB5A30jAC48vIaYQJIg3zup9q2GbqM'
 # Define a few command handlers
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=f"Hello {update.effective_user.mention_markdown_v2()}"
+    user = update.effective_user
+    update.message.reply_markdown_v2(
+        fr'Hello {user.mention_markdown_v2()}\!',
+        reply_markup=ForceReply(selective=True),
     )
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="Welcome to smart polling\nPlease choose one of the options:"
-    )
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=f'''
-            /register
-        '''
+    update.message.reply_text("Welcome to smart polling\nPlease choose one of the options:")
+    update.message.reply_text(
+        "/register <user-name> - Register to start answer polls via telegram"
+        "\n<user-name> in smart pooling system"
+        "\n"
+        "\n/remove <user-name> - To stop getting polls queries"
+        "\n<user-name> in smart polling system"
+        "\n"
+        "\n/start - Use start anytime to see this menu again"
     )
 
 
 def register(update: Update, context: CallbackContext) -> None:
-    """"""
-    update.message.reply_text('register!')
+    msg = update.message
+    if len(msg.text.split(' ')) == 1:
+        msg.reply_text("You need to provide the username to register")
+        return
+    response = requests.get(
+        url=HOME_PAGE + 'register',
+        params={
+            'username': msg.text.split(' ')[1],
+            'chat_id': msg.chat.id
+        }
+    )
+    update.message.reply_text(response.text)
 
 
 def remove(update: Update, context: CallbackContext) -> None:
-    """"""
-    update.message.reply_text('remove!')
+    msg = update.message
+    if len(msg.text.split(' ')) == 1:
+        msg.reply_text("You need to provide the username to remove")
+        return
+    response = requests.get(
+        url=HOME_PAGE + 'remove',
+        params={
+            'username': msg.text.split(' ')[1],
+            'chat_id': msg.chat.id
+        }
+    )
+    update.message.reply_text(response.text)
 
 
 def invalid_message(update: Update, context: CallbackContext) -> None:
-    """"""
-    update.message.reply_text('This option is not valid, use /start to see the option menu.')
+    update.message.reply_text('This option is not valid'
+                              'use /start to see the option menu.')
 
 
 def run_telegram_bot() -> None:
@@ -62,7 +84,8 @@ def run_telegram_bot() -> None:
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    # TODO: maybe fix it
+    # updater.idle()
 
 
 if __name__ == '__main__':

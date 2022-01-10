@@ -5,3 +5,4 @@ POSTGRES_CONFIG = {
     'port': 5432
 }
 
+HOME_PAGE = 'http://localhost:5000/'

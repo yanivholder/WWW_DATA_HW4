@@ -8,4 +8,6 @@ dependencies:
   - flask
   - python-dotenv
   - flask-sqlalchemy
+  - requests
+  - psycopg2
   - sqlalchemy-utils
