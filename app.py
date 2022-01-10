@@ -16,5 +16,29 @@ def index():
     return '<h1>The site is not implemented yet</h1>'
 
 
+@app.route('/register')
+def register_request():
+    pass
+
+
+@app.route('/remove')
+def remove_request():
+    pass
+
+
+# TODO: think about the handlers logic
+# Error handlers
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return "404 Not Found"
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return "500 Internal Error"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+

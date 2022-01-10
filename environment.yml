@@ -1,13 +1,11 @@
 name: www_hw4
 channels:
-  - conda-forge
   - defaults
 dependencies:
   - python
   - python-telegram-bot
+  - sqlalchemy
   - flask
   - python-dotenv
-  - sqlalchemy
-  - psycopg2
   - flask-sqlalchemy
-prefix: C:\Users\yaniv.holder\Miniconda3\envs\www_hw4
+  - sqlalchemy-utils

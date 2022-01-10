@@ -39,7 +39,7 @@ def invalid_message(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('This option is not valid, use /start to see the option menu.')
 
 
-def main() -> None:
+def run_telegram_bot() -> None:
     """Start the bot."""
     # Create the Updater and pass it your bot's token.
     updater = Updater(TOKEN, use_context=True)
@@ -65,4 +65,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    run_telegram_bot()
