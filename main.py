@@ -1,9 +1,15 @@
 import threading
+import logging
 from sqlalchemy_utils import database_exists, create_database
 
 from app import app
 from models import db
 from telegram_bot import run_telegram_bot
+
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
 
 
 class FlaskThread(threading.Thread):

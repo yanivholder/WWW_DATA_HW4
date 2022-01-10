@@ -27,6 +27,7 @@ def remove_request():
 
 
 # TODO: think about the handlers logic
+# TODO: maybe add render_template
 # Error handlers
 
 @app.errorhandler(404)

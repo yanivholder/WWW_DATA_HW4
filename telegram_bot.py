@@ -5,22 +5,23 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 TOKEN = '5000025980:AAEd8VB5A30jAC48vIaYQJIg3zup9q2GbqM'
 
-# Enable logging
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
-)
-
-logger = logging.getLogger(__name__)
-
 
 # Define a few command handlers
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
-    user = update.effective_user
-    # TODO: Add the option menu
-    update.message.reply_markdown_v2(
-        fr'Hi {user.mention_markdown_v2()}\!',
-        reply_markup=ForceReply(selective=True),
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=f"Hello {update.effective_user.mention_markdown_v2()}"
+    )
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="Welcome to smart polling\nPlease choose one of the options:"
+    )
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=f'''
+            /register
+        '''
     )
 
 
