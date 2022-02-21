@@ -1,6 +1,7 @@
 name: www_hw4
 channels:
   - defaults
+  - conda-forge
 dependencies:
   - python
   - python-telegram-bot

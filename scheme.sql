@@ -15,11 +15,11 @@ CREATE TABLE Polls
 );
 
 
-CREATE TABLE Answears
+CREATE TABLE Answers
 (
     user_id String REFERENCES Users(id),
     poll_id Integer REFERENCES Polls(id),
-    answear String NOT NULL,
+    answer String NOT NULL,
     PRIMARY KEY (user_id, poll_id)
 );
 
