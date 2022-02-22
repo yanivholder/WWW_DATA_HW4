@@ -57,6 +57,29 @@ def remove(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(response.text)
 
 
+def answer(update: Update, context: CallbackContext) -> None:
+    msg = update.message
+    if len(msg.text.split(' ')) < 3:
+        msg.reply_text("You need to specify an answer and a poll")
+        return
+    response = requests.get(
+        url=HOME_PAGE + 'answer',
+        params={
+            'answer': msg.text.split(' ')[1],
+            'poll': msg.text.split(' ')[2],
+            'chat_id': msg.chat.id
+        }
+    )
+    update.message.reply_text(response.text)
+
+
+def broadcast_poll(recipients: list, poll_content, poll_answers):
+    for recip in recipients:
+        send_text = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' \
+                                                + recip + '&parse_mode=Markdown&text=' + poll_content + poll_answers
+        requests.get(send_text)
+
+
 def invalid_message(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('This option is not valid.\n'
                               'use /start to see the option menu.')
@@ -74,6 +97,8 @@ def run_telegram_bot() -> None:
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("register", register))
     dispatcher.add_handler(CommandHandler("remove", remove))
+
+    dispatcher.add_handler(CommandHandler("answer", answer))
 
     # Message handlers
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, invalid_message))

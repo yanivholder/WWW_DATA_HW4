@@ -26,6 +26,6 @@ CREATE TABLE Answers
 
 CREATE TABLE Admins
 (
-    id Integer NOT NULL PRIMARY KEY,
+    username String NOT NULL PRIMARY KEY,
     password String NOT NULL
 );

@@ -51,6 +51,9 @@ if __name__ == "__main__":
 
     bot_thread = TelegramThread()
     bot_thread.start()
+    # TODO - find where can i do this so the admin is added on init
+    # Admin.register_new_admin(user_name="admin", pwd="236369")
+
 
     react_process = Process(target=run_react)
     react_process.start()
