@@ -1,5 +1,8 @@
 import threading
 import logging
+import os
+import subprocess
+from multiprocessing import Process
 
 import sqlalchemy.testing.util
 from sqlalchemy_utils import database_exists, create_database
@@ -36,11 +39,21 @@ class TelegramThread(threading.Thread):
         run_telegram_bot()
 
 
+def run_react():
+    os.chdir("./react-app")  # change this before submission
+    subprocess.check_call('npm install', shell=True)
+    subprocess.check_call('npm start', shell=True)
+
+
 if __name__ == "__main__":
     flask_thread = FlaskThread()
     flask_thread.start()
+
     bot_thread = TelegramThread()
     bot_thread.start()
+
+    react_process = Process(target=run_react)
+    react_process.start()
 
 
 

@@ -5,11 +5,11 @@ from config import POSTGRES_CONFIG
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'''
-    postgresql://{POSTGRES_CONFIG["username"]}:{POSTGRES_CONFIG["password"]}@localhost:{POSTGRES_CONFIG["port"]}/{POSTGRES_CONFIG["name"]}
-'''.strip()
-
-db.init_app(app)
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'''
+#     postgresql://{POSTGRES_CONFIG["username"]}:{POSTGRES_CONFIG["password"]}@localhost:{POSTGRES_CONFIG["port"]}/{POSTGRES_CONFIG["name"]}
+# '''.strip()
+#
+# db.init_app(app)
 
 @app.route('/')
 def index():
@@ -69,6 +69,35 @@ def remove_request():
 
 # TODO: think about the handlers logic
 # TODO: maybe add render_template
+
+# Polling functions
+
+######################################################### TODO: erase
+TMP = ([],  # filters
+       "What color are the skies",  # question
+       ["White",
+        "Blue",
+        "Brown",
+        "Yellow"])  # answers
+
+
+@app.route('/test')
+def test():
+    import time
+    return {'time': time.time()}
+
+######################################################### \erase
+
+
+@app.route('/poll')
+def make_new_poll():
+    filters, question, answers = TMP
+
+
+@app.route('/poll_info')
+def get_info_about_poll():
+    filters, question, answers = TMP
+
 # Error handlers
 
 @app.errorhandler(404)
