@@ -1,7 +1,8 @@
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import CheckConstraint
 from sqlalchemy import PrimaryKeyConstraint
-from sqlalchemy import ForeignKeyConstraint, ForeignKey
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -11,6 +12,7 @@ class User(db.Model):
     id = db.Column(db.String, primary_key=True)
     username = db.Column(db.String(64), unique=False, index=False)
     live = db.Column(db.Boolean(64), unique=False, index=False)
+    answers = db.relationship('Answer', backref='user')
 
     def __repr__(self):
         return f'<User {self.username}'
@@ -34,28 +36,40 @@ class User(db.Model):
             return user.live
 
     @staticmethod
-    def activate(chat_id):
+    def activate(chat_id, do_commit=True):
         db.session.query(User).filter(User.id == chat_id).update({'live': True})
-        db.session.commit()
+        if do_commit:
+            db.session.commit()
 
     @staticmethod
-    def register_new(chat_id, user_name):
+    def register_new(chat_id, user_name, do_commit=True):
         """ does the registration in to the DB for first time registration """
         db.session.add(User(id=chat_id, username=user_name, live=True))
-        db.session.commit()
+        if do_commit:
+            db.session.commit()
 
     @staticmethod
-    def register_update(chat_id, user_name):
+    def register_update(chat_id, user_name, do_commit=True):
         """ does the registration in to the DB for non-first time registration """
         db.session.query(User).filter(User.id == chat_id).update({'username': user_name})
-        db.session.commit()
+        if do_commit:
+            db.session.commit()
 
     @staticmethod
-    def remove(chat_id):
+    def remove(chat_id, do_commit=True):
         # to_be_removed = db.session.query(User).filter(User.id == chat_id).first()
         # db.session.delete(to_be_removed)
         db.session.query(User).filter(User.id == chat_id).update({'live': False})
-        db.session.commit()
+        if do_commit:
+            db.session.commit()
+
+    @staticmethod
+    def get_all_active_users():
+        all_active = db.session.query(User).filter_by(live=True).all()
+        if all_active is None:
+            return []
+        else:
+            return [usr.id for usr in all_active]
 
 
 class Poll(db.Model):
@@ -66,6 +80,7 @@ class Poll(db.Model):
     possible_answers = db.Column(db.String, unique=False, index=False, nullable=False)
     PrimaryKeyConstraint(poll_id)
     CheckConstraint(poll_id > 0)
+    answers = db.relationship('Answer', backref='poll')
 
     def __repr__(self):
         return f'<Poll {self.content}'
@@ -77,25 +92,35 @@ class Poll(db.Model):
         if pos_ans is None:
             return []
         else:
-            return pos_ans.content.split(',')
+            return pos_ans.possible_answers.split(',')
 
     @staticmethod
-    def get_all_polls():
+    def get_all_polls_id():
         polls = db.session.query(Poll).filter_by().all()
         if polls is None:
             return []
         else:
-            return [p.id for p in polls]
+            return [p.poll_id for p in polls]
 
     @staticmethod
-    def add_new_poll(new_poll_content, new_poll_answers) -> int:
+    def get_all_polls_id_and_content():
+        polls = db.session.query(Poll).filter_by().all()
+        if polls is None:
+            return []
+        else:
+            return [(p.poll_id, p.content) for p in polls]
+
+    @staticmethod
+    def add_new_poll_and_default_answers(new_poll_content: str, new_poll_answers: str, relevant_users,
+                                         do_commit=True) -> int:
         current_poll_id = Poll.poll_unique_id_counter
         Poll.poll_unique_id_counter += 1
         db.session.add(Poll(poll_id=current_poll_id, content=new_poll_content, possible_answers=new_poll_answers))
+
+        Answer.add_new_poll_default_answers(relevant_users, current_poll_id, do_commit=False)
+        if do_commit:
+            db.session.commit()
         return current_poll_id
-
-
-
 
 
 class Answer(db.Model):
@@ -110,20 +135,22 @@ class Answer(db.Model):
 
     @staticmethod
     def get_current_answer(user_id, poll_id):
-        return db.session.query(User).filter_by(user_id=user_id, poll_id=poll_id).first().answer
+        return db.session.query(Answer).filter_by(user_id=user_id, poll_id=poll_id).first().answer
 
     @staticmethod
-    def add_new_poll_default_answers(relevant_users, poll_id):
+    def add_new_poll_default_answers(relevant_users, poll_id, do_commit=True):
         """ """
         for usr in relevant_users:
             db.session.add(Answer(user_id=usr, poll_id=poll_id, answer="N.A"))
-        db.session.commit()
+        if do_commit:
+            db.session.commit()
 
     @staticmethod
-    def update_user_answer(usr_id, poll_id, ans):
+    def update_user_answer(usr_id, poll_id, ans, do_commit=True):
         """ before calling this, upper level should check that and is in <poll_id>'s possible answers """
-        db.session.query(User).filter(Answer.user_id == usr_id, Answer.poll_id == poll_id).update({'answer': ans})
-        db.session.commit()
+        db.session.query(Answer).filter(Answer.user_id == usr_id, Answer.poll_id == poll_id).update({'answer': ans})
+        if do_commit:
+            db.session.commit()
 
     @staticmethod
     def get_poll_audience(poll_id):
@@ -134,21 +161,69 @@ class Answer(db.Model):
         else:
             return [row.user_id for row in relevant_users]
 
+    @staticmethod
+    def users_that_answered_a_on_q(poll_id: int, specific_answer: str):
+        specific_users = db.session.query(Answer).filter_by(poll_id=poll_id, answer=specific_answer).all()
+        return [usr.user_id for usr in specific_users]
 
-class Admin(db.Model):
+    @staticmethod
+    def get_poll_answer_count(poll_id):
+        answers = ["N.A"]
+        answers += Poll.get_poll_all_possible_answers(poll_id)
+        ret = {}
+        for pos_ans in answers:
+            ret[pos_ans] = len(Answer.users_that_answered_a_on_q(poll_id, pos_ans))
+
+        return ret
+
+
+class Admin(UserMixin, db.Model):
     __tablename__ = 'admins'
     username = db.Column(db.String, primary_key=True, nullable=False)
-    password = db.Column(db.String(64), unique=False, index=False, nullable=False)
+    password_hash = db.Column(db.String(128), unique=False, index=False, nullable=False)
 
     def __repr__(self):
         return f'<Admin {self.username}'
 
-    @staticmethod
-    def register_new_admin(user_name, pwd):
-        """ Add another admin to the system """
-        db.session.add(Admin(username=user_name, password=pwd))
-        db.session.commit()
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     @staticmethod
-    def m1(chat_id):
-        """ """
+    def register_new_admin(user_name, pwd, do_commit=True):
+        """ Add another admin to the system """
+        db.session.add(Admin(username=user_name, password=pwd))
+        if do_commit:
+            db.session.commit()
+
+    @staticmethod
+    def register_super_admin(input_db):
+        """ Add first default admin to the system,
+        different func because we need to specify db before app gives db by context """
+        input_db.session.add(Admin(username="admin", password="236369"))
+        input_db.session.commit()
+
+    @staticmethod
+    def authenticate_admin(user_name, pwd):
+        """  """
+        return db.session.query(Admin).filter_by(username=user_name).first().verify_password(pwd)
+
+    @staticmethod
+    def is_registered(admin_name):
+        """ checks whether admin_name is in the table Users, if so, return the current name under it, if not - none """
+        admin = db.session.query(Admin).filter_by(username=admin_name).first()
+        if admin is None:
+            return False
+        else:
+            return True
+
+    @staticmethod
+    def get_by_name(admin_name):
+        return db.session.query(Admin).filter_by(username=admin_name).first()

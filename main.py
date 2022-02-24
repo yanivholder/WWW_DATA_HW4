@@ -3,8 +3,10 @@ import logging
 import os
 import subprocess
 from multiprocessing import Process
+from models import Admin
 
 import sqlalchemy.testing.util
+from sqlalchemy import engine
 from sqlalchemy_utils import database_exists, create_database
 
 from app import app
@@ -17,6 +19,10 @@ logging.basicConfig(
 )
 
 
+# def table_exists(name):
+#     return engine.dialect.has_table(engine, name)
+
+
 class FlaskThread(threading.Thread):
     def run(self) -> None:
         if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
@@ -25,11 +31,12 @@ class FlaskThread(threading.Thread):
             with app.app_context():
                 db.create_all()
                 db.session.commit()
+                Admin.register_super_admin(db)
         else:
-            with app.app_context():
-                db.drop_all()
-                db.create_all()
-                db.session.commit()
+            # with app.app_context():
+                # db.drop_all()
+                # db.create_all()
+                # db.session.commit()
             print("db exists")
         app.run()
 
@@ -51,12 +58,9 @@ if __name__ == "__main__":
 
     bot_thread = TelegramThread()
     bot_thread.start()
-    # TODO - find where can i do this so the admin is added on init
-    # Admin.register_new_admin(user_name="admin", pwd="236369")
 
-
-    react_process = Process(target=run_react)
-    react_process.start()
+    # react_process = Process(target=run_react)
+    # react_process.start()
 
 
 
