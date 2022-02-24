@@ -19,10 +19,6 @@ logging.basicConfig(
 )
 
 
-# def table_exists(name):
-#     return engine.dialect.has_table(engine, name)
-
-
 class FlaskThread(threading.Thread):
     def run(self) -> None:
         if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
@@ -33,10 +29,10 @@ class FlaskThread(threading.Thread):
                 db.session.commit()
                 Admin.register_super_admin(db)
         else:
-            # with app.app_context():
-                # db.drop_all()
-                # db.create_all()
-                # db.session.commit()
+            with app.app_context():
+                db.drop_all()
+                db.create_all()
+                db.session.commit()
             print("db exists")
         app.run()
 
