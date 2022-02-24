@@ -5,10 +5,10 @@ import { faqContent } from './faq-content';
 export const FAQ = () => {
 
     return (
-        <div className='about-page-container'>
+        <div className='faq-page-container'>
             <h2>  FAQ  </h2>
-            { faqContent.map((faq, id) => 
-                <details>
+            { faqContent.map((faq) => 
+                <details key={faq.qID}>
                     <summary>{faq.question}</summary>
                     {faq.answer}
                 </details>

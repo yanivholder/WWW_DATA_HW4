@@ -104,7 +104,6 @@ def broadcast_poll(recipients: list, poll_id, poll_content, poll_answers):
 def intersection(lst1, lst2):
     return list(set(lst1) & set(lst2))
 
-
 def filter_users_by_answers(predicate: str) -> list:  # get back only users after filter by pred
     all_users = User.get_all_active_users()
     if predicate is None or len(predicate) == 0:
@@ -243,6 +242,22 @@ def page_not_found(e):
 def page_not_found(e):
     return "500 Internal Error"
 
+QUESTIONS = [
+    (1, "What is your eyes color"),
+    (2, "Do you love apples"),
+    (3, "How much legs 4 spiders and two people have?")
+]
+
+############################################### TODO: erase
+@app.route('/test/get_polls')
+def test_get_polls():
+    return {"questions": QUESTIONS}
+
+
+@app.route('/test/poll_info/1')
+def test_poll_info():
+    return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
+###################################################### \erase
 
 if __name__ == '__main__':
     app.run(debug=True)

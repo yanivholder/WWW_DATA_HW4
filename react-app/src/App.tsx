@@ -5,6 +5,7 @@ import { PageLayout } from './components/Pages/PageLayout';
 
 export const App = () => {
   const [page, setPage] = React.useState<number>(0);
+  const [failedLogin, setFailedLogin] = React.useState<boolean>(false);
 
   const changePage = (newPage: number) => {
     setPage(newPage);
@@ -14,7 +15,11 @@ export const App = () => {
   return (
     <div className="root">
       <Header changePage={changePage}/>
-      <PageLayout page={page} />
+      <PageLayout 
+        page={page}
+        failedLogin={failedLogin}
+        setFailedLogin={setFailedLogin}
+      />
     </div>
   );
 }
