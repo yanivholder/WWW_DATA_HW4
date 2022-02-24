@@ -36,7 +36,7 @@ export const faqContent: FaqContent[] = [
             '+ We care about your password’s safety and will never save it as plain-text\n',
     },
     {
-        qID: 6
+        qID: 6,
         question: 'Can I delte a Poll after I sent it?',
         answer: 'Polls cannot be deleted once sent'
     }
