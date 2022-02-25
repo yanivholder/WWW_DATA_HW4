@@ -20,13 +20,6 @@ export const PollButton: React.FC<PollButtonProps> = ({
     const { pollID, content } = question;
 
     const handlePollButtonOpen = () => {
-        const newFilter: Filter = {
-            pollID: question.pollID,
-            question: question.content,
-            answer: ""
-        }
-        const newFilterList = [...filters, newFilter];
-        setFilters(newFilterList);
         setIsOpen(true);
     }
 
@@ -41,8 +34,10 @@ export const PollButton: React.FC<PollButtonProps> = ({
             </button>
             {isOpen && 
                 <Popup
-                    pollID={ pollID }
                     handleClose={handlePollButtonClose}
+                    filters={filters}
+                    setFilters={setFilters}
+                    question={question}
                 />
             }
         </div>

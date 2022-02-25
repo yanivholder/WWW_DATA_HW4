@@ -16,7 +16,7 @@ export const Filters: React.FC<FiltersProps> = ({
 
     const [isCreatePollOpen, setIsCreatePollOpen] = useState<boolean>(false);
     const handleCreatePoll = () => {
-        setIsCreatePollOpen(!setIsCreatePollOpen);
+        setIsCreatePollOpen(!isCreatePollOpen);
     }
 
     return (
@@ -30,13 +30,15 @@ export const Filters: React.FC<FiltersProps> = ({
             {
                 filters.length > 0 ?
                     filters.map(filter => 
-                        <p> {filter.question} </p>)
+                        <p> {filter.question} = {filter.answer} </p>)
                 :
                 ""
             }
             {isCreatePollOpen && 
                 <CreatePollPopup
                     handleClose={handleCreatePoll}
+                    filters={filters}
+                    setFilters={setFilters}
                 />
             }
         </div>

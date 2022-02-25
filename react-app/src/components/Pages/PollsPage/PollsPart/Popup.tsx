@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { string } from "yargs";
-import { AnswerInfo } from "../../../../types";
+import { AnswerInfo, Filter, Question } from "../../../../types";
  
 export interface PopupProps {
     // TODO: change the type
-    pollID: number;
     handleClose: any;
+    filters: Filter[];
+    setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
+    question: Question;
 }
 
 export const Popup: React.FC<PopupProps> = ({
-    pollID,
-    handleClose
+    handleClose,
+    filters,
+    setFilters,
+    question
 }) => {
 
     const [questionInfo, setQuestionInfo] = useState<AnswerInfo[]>([]);
     
     useEffect(() => {
-        fetch(`/test/poll_info/${pollID}`)
+        fetch(`/test/poll_info/${question.pollID}`)
         .then(data => data.json())
         .then(data => { 
             let answerInfoList: AnswerInfo[] = [];
@@ -31,6 +35,22 @@ export const Popup: React.FC<PopupProps> = ({
          });
     }, []);
 
+    const handleAnswerSelect = (answerInfo: AnswerInfo) => {
+        const newFilter: Filter = {
+          pollID: question.pollID,
+          question: question.content,
+          answer: answerInfo.answer
+        }
+        if(filters.filter(e => e.pollID === newFilter.pollID).length > 0) {
+            alert("This poll is already filtered");
+        }
+        else {
+            handleClose();
+            const newFilterList = [...filters, newFilter];
+            setFilters(newFilterList);
+        }
+    }
+
     return (
     <div className="popup-box">
       <div className="box">
@@ -39,7 +59,12 @@ export const Popup: React.FC<PopupProps> = ({
         {
             // TODO: add key
             questionInfo.map(answerInfo =>
-                <><p>{answerInfo.answer}</p><p>{answerInfo.amount}</p></>)
+                <>
+                  <button onClick={() => handleAnswerSelect(answerInfo)}>
+                    {answerInfo.answer}
+                  </button>  
+                  <p>{answerInfo.amount}</p>
+                </>)
         }
         </div>
       </div>

@@ -235,12 +235,12 @@ def logout():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return "404 Not Found"
+    return Response("404 Not Found", status=404)
 
 
 @app.errorhandler(500)
 def page_not_found(e):
-    return "500 Internal Error"
+    return Response("500 Internal Error", status=404)
 
 QUESTIONS = [
     (1, "What is your eyes color"),
@@ -265,6 +265,15 @@ def test_login():
         return Response(status=200)
     else:
         return Response(status=400)
+
+@app.route('/test/add_admin')
+def test_add_admin():
+    return Response(status=200)
+
+@app.route('/test/add_poll')
+def test_add_poll():
+    print(request.headers)
+    return Response(status=200)
 ###################################################### \erase
 
 if __name__ == '__main__':

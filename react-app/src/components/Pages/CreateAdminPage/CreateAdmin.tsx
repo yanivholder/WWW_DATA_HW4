@@ -8,13 +8,18 @@ export const CreateAdmin = () => {
 
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
 
     const handleCreateAdmin = async (e: any) => {
         e.preventDefault();
 
         // TODO: add usernamer and password validations
-        
-        fetch('/test/add_admin',
+
+        if(password !== confirmPassword) {
+            alert("Passwords are not the same");
+        }
+        else {
+            fetch('/test/add_admin',
             {
                 method: 'GET',
                 headers: {
@@ -23,14 +28,18 @@ export const CreateAdmin = () => {
                     'Content-Type': 'application/json'   
                 }
             })
-        .then(resp => {
-            if(resp.status === 200) {
-                alert("Admin created successfully")
-            } 
-            else {
-                alert("A problem occured")
-            }
-        })
+            .then(resp => {
+                if(resp.status === 200) {
+                    setUsername("");
+                    setPassword("");
+                    setConfirmPassword("");
+                    alert("Admin created successfully");
+                } 
+                else {
+                    alert("A problem occured");
+                }
+            });
+        }
     }
 
     return(
@@ -50,6 +59,11 @@ export const CreateAdmin = () => {
                         type="password"
                         placeholder="Enter your password"
                         onChange={({ target }) => {setPassword(target.value)}}
+                    />
+                    <input id="Confirm Password"
+                        type="password"
+                        placeholder="Enter your password again"
+                        onChange={({ target }) => {setConfirmPassword(target.value)}}
                     />
                 </div>
 

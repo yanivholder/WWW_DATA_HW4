@@ -43,7 +43,7 @@ class TelegramThread(threading.Thread):
 
 
 def run_react():
-    os.chdir("./react-app")  # change this before submission
+    os.chdir(os.path.join(os.getcwd(), r'react-app'))
     subprocess.check_call('npm install', shell=True)
     subprocess.check_call('npm start', shell=True)
 
