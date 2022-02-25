@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { string } from "yargs";
-import { AnswerInfo } from "../../../types";
+import { AnswerInfo } from "../../../../types";
  
 export interface PopupProps {
     // TODO: change the type

@@ -257,6 +257,14 @@ def test_get_polls():
 @app.route('/test/poll_info/1')
 def test_poll_info():
     return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
+
+
+@app.route('/test/login')
+def test_login():
+    if request.headers["username"] == "yaniv" and request.headers["password"] == "123":
+        return Response(status=200)
+    else:
+        return Response(status=400)
 ###################################################### \erase
 
 if __name__ == '__main__':

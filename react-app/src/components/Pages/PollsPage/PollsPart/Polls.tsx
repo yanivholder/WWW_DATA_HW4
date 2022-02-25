@@ -1,10 +1,19 @@
 import React from 'react';
-import '../../../App.css';
+import '../../../../App.css';
 import { useEffect, useState } from 'react';
-import { Question } from '../../../types';
+import { Question, Filter } from '../../../../types';
 import { PollButton } from './PollButton';
+import { Filters } from '../FiltersPart/Filters'
 
-export const Polls = () => {
+export interface PollsProps {
+    filters: Filter[];
+    setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
+}
+export const Polls: React.FC<PollsProps> = ({
+    filters,
+    setFilters
+}) => {
+
    const [questions, setQuestions] = useState<Question[]>([]);
 
    useEffect(() => {
@@ -25,13 +34,22 @@ export const Polls = () => {
 
     return (
         <div className='polls-page-container'>
+            <Filters
+                filters={filters}
+                setFilters={setFilters}
+            />
             <h2> Polls Page </h2>
             <div> 
             {
                 // TODO: Fix the race between rendering and useEffect
                 questions.length > 0 ?
                     questions.map(question =>
-                        <PollButton key={question.pollID} question={question}/>)
+                        <PollButton
+                            key={question.pollID}
+                            question={question}
+                            filters={filters}
+                            setFilters={setFilters}
+                        />)
                 :
                 <h2> No Polls Created Yet </h2>
             }

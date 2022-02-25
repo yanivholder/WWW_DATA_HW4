@@ -4,25 +4,17 @@ import React, { useState } from 'react';
 import '../../../App.css';
 
 
-export interface LoginProps {
-    isLoggedIn: boolean;
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export const Login: React.FC<LoginProps> = ({
-    isLoggedIn,
-    setIsLoggedIn
-}) => {
+export const CreateAdmin = () => {
 
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
-    const handleLogin = async (e: any) => {
+    const handleCreateAdmin = async (e: any) => {
         e.preventDefault();
 
         // TODO: add usernamer and password validations
         
-        fetch('/test/login',
+        fetch('/test/add_admin',
             {
                 method: 'GET',
                 headers: {
@@ -33,27 +25,27 @@ export const Login: React.FC<LoginProps> = ({
             })
         .then(resp => {
             if(resp.status === 200) {
-                setIsLoggedIn(true);
+                alert("Admin created successfully")
             } 
             else {
-                alert("username or password are incorrect")
+                alert("A problem occured")
             }
         })
     }
 
     return(
         <div id="login-form">
-            <form onSubmit={(handleLogin)}>
+            <form onSubmit={(handleCreateAdmin)}>
                 
                 <div className='container'>
-                    <label htmlFor="Username"><b>Username </b></label>
+                    <label htmlFor="Username"><b>New Username </b></label>
                     <input id="Username"
                         type="text"
                         placeholder="Enter Username"
                         onChange={({ target }) => {setUsername(target.value)}}
                     />
 
-                    <label htmlFor="Password"><b>Password </b></label>
+                    <label htmlFor="Password"><b>New Password </b></label>
                     <input id="Password"
                         type="password"
                         placeholder="Enter your password"
@@ -62,7 +54,7 @@ export const Login: React.FC<LoginProps> = ({
                 </div>
 
                 <div id="button">
-                    <button type="submit">Login</button>
+                    <button type="submit">Create</button>
                 </div>
             </form>
         </div>

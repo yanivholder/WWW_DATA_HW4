@@ -1,32 +1,40 @@
 import React, { useState } from 'react';
 import '../../App.css';
 import { About } from './AboutPage/About';
-import { Polls } from './PollsPage/Polls';
+import { Polls } from './PollsPage/PollsPart/Polls';
 import { FAQ } from './FAQPage/FAQ';
 import { Login } from './LoginPage/Login'
+import { CreateAdmin } from './CreateAdminPage/CreateAdmin'
+import { Filter } from '../../types';
 
 export interface PageLayoutProps {
     page: number;
-    failedLogin: boolean;
-    setFailedLogin: React.Dispatch<React.SetStateAction<boolean>>;
+    isLoggedIn: boolean;
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const PageLayout: React.FC<PageLayoutProps> = ({
     page,
-    failedLogin,
-    setFailedLogin
+    isLoggedIn,
+    setIsLoggedIn
 }) => {
 
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [filters, setFilters] = React.useState<Filter[]>([]);
+
 
     if(isLoggedIn) {
         // TODO: Maybe switch to Router
         switch(page) {
             case 0:
-                return <Polls />            
+                return <Polls 
+                        filters={filters}
+                        setFilters={setFilters}
+                        />            
             case 1:
                 return <About />
             case 2:
                 return <FAQ />
+            case 3:
+                return <CreateAdmin />
             default:
                 return null;            
     
@@ -38,8 +46,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         return <Login 
                     isLoggedIn={isLoggedIn}
                     setIsLoggedIn={setIsLoggedIn}
-                    failedLogin={failedLogin}
-                    setFailedLogin={setFailedLogin}
                 />
     }
     

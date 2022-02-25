@@ -12,3 +12,4 @@ dependencies:
   - requests
   - psycopg2
   - sqlalchemy-utils
+  - flask-login
