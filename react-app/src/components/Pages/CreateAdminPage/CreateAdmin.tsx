@@ -12,12 +12,27 @@ export const CreateAdmin = () => {
 
     const handleCreateAdmin = async (e: any) => {
         e.preventDefault();
+        console.log("Username: " + username + " Pass: " + password);
 
-        // TODO: add usernamer and password validations
-
-        if(password !== confirmPassword) {
+        if(username.length < 3) {
+            alert("Username should be at least 3 characters");
+        }
+        else if(!username.match("^[A-Za-z0-9]+$")) {
+            alert("Username can contain only letters and numbers");
+        }
+        else if(!username.charAt(0).match("^[A-Za-z]+$")) {
+            alert("The username must start with a letter");
+        }
+        else if(password.length < 5) {
+            alert("Password should be at least 5 characters");
+        }
+        else if(!password.match("^[A-Za-z0-9!@#$%^&*]+$")) {
+            alert("Password can contain only letters, numbers, !, @, #, $, %, ^, & and *");
+        }
+        else if(password !== confirmPassword) {
             alert("Passwords are not the same");
         }
+        // TODO: add salt to password
         else {
             fetch('/test/add_admin',
             {
@@ -30,9 +45,6 @@ export const CreateAdmin = () => {
             })
             .then(resp => {
                 if(resp.status === 200) {
-                    setUsername("");
-                    setPassword("");
-                    setConfirmPassword("");
                     alert("Admin created successfully");
                 } 
                 else {

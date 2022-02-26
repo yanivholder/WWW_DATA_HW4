@@ -13,3 +13,4 @@ dependencies:
   - psycopg2
   - sqlalchemy-utils
   - flask-login
+  - flask-cors

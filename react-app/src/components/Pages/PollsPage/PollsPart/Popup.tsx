@@ -3,7 +3,6 @@ import { AnswerInfo, Filter, Question } from "../../../../types";
 import { Chart } from './Chart';
 
 export interface PopupProps {
-    // TODO: change the type
     handleClose: any;
     filters: Filter[];
     setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
@@ -56,15 +55,20 @@ export const Popup: React.FC<PopupProps> = ({
       <div className="box">
       <h2 style={{marginBottom: '20px', marginTop: '0', textDecoration: 'underline'}}>{question.content}</h2>
         <span className="close-icon" onClick={handleClose}>x</span>
-        <div style={{position: 'relative', float: 'left', width: '50%'}}>
+        <div style={{position: 'relative', float: 'left', width: '50%', height: '30vh'}}>
           <Chart question={question} questionInfo={questionInfo}/>
         </div>
         <div style={{position: 'relative', float: 'right', width: '50%'}}>
           <h2>By which answer would you like to filter?</h2>
           {
-              // TODO: add key
               questionInfo.map(answerInfo => 
-                  <div className="answers-row">
+                  <div 
+                    key={
+                      questionInfo.findIndex((element) => 
+                        element.answer === answerInfo.answer)
+                      }
+                    className="answers-row"
+                  >
                     <button className="poll-button" onClick={() => handleAnswerSelect(answerInfo)}>
                       {answerInfo.answer}
                     </button>  

@@ -41,7 +41,6 @@ export const Polls: React.FC<PollsProps> = ({
             <h2> Polls Questions </h2>
             <div className='polls-buttons-tab'> 
             {
-                // TODO: Fix the race between rendering and useEffect
                 questions.length > 0 ?
                     questions.map(question =>
                         <PollButton

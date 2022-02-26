@@ -37,7 +37,6 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
                 fetch('/test/add_poll',
                 {
                     method: 'GET',
-                    // TODO: add filters
                     headers: {
                         'question': question,
                         'answer1': answer1,

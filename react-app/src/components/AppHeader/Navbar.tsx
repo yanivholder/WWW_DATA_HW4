@@ -17,32 +17,40 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     const handlePageChange = (page: string) => {
         // Think about a better way to do that:
-        if(isLoggedIn){
-            switch(page) {
-                case 'Polls':
+        switch(page) {
+            case 'Polls':
+                if(isLoggedIn) {
                     changePage(0);
-                    break;
-                case 'About':
-                    changePage(1);
-                    break;
-                case 'FAQ':
-                    changePage(2);
-                    break;
-                case 'Create Admin':
+                } else {
+                    alert("You need to sign in first");
+                }
+                break;
+            case 'About':
+                changePage(1);
+                break;
+            case 'FAQ':
+                changePage(2);
+                break;
+            case 'Create Admin':
+                if(isLoggedIn) {
                     changePage(3);
-                    break;
-                default:
-                    break;
-            }   
-        }
-        else {
-            alert("You need to sign in first")
-        }
+                } else {
+                    alert("You need to sign in first");
+                }
+                break;
+            default:
+                break;
+        }   
     }
 
     const handleLogout = () => {
         fetch('/test/logout');
+        // Check response
+        changePage(4);
         setIsLoggedIn(false);
+    }
+    const handleLogin = () => {
+        changePage(4);
     }
 
     return (
@@ -59,7 +67,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     Logout    
                 </button>
                 :
-                ""
+                <button className='nav-button-login' onClick={() => handleLogin()}>
+                    Login    
+                </button>
             }
         </div>
     )

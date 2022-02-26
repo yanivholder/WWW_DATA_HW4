@@ -2,14 +2,19 @@ import { response } from 'express';
 import { async } from 'q';
 import React, { useState } from 'react';
 import '../../../App.css';
+import { server_url } from '../../../app-constants';
 
 
 export interface LoginProps {
+    page: number;
+    setPage: React.Dispatch<React.SetStateAction<number>>;
     isLoggedIn: boolean;
     setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const Login: React.FC<LoginProps> = ({
+    page,
+    setPage,
     isLoggedIn,
     setIsLoggedIn
 }) => {
@@ -17,12 +22,10 @@ export const Login: React.FC<LoginProps> = ({
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
-    const handleLogin = async (e: any) => {
+    const handleLogin = (e: any) => {
         e.preventDefault();
-
-        // TODO: add usernamer and password validations
         
-        fetch('/test/login',
+        fetch(`/test/login`,
             {
                 method: 'GET',
                 headers: {
@@ -34,11 +37,12 @@ export const Login: React.FC<LoginProps> = ({
         .then(resp => {
             if(resp.status === 200) {
                 setIsLoggedIn(true);
+                setPage(0);
             } 
             else {
-                alert("username or password are incorrect")
+                alert("username or password are incorrect");
             }
-        })
+        });
     }
 
     return(

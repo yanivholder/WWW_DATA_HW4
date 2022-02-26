@@ -29,11 +29,22 @@ export const Filters: React.FC<FiltersProps> = ({
                     Create Poll
                 </button>
             </div>
+            <div>
+                <h2 style={{float: 'left', marginLeft: '10px', marginBottom: '0', textDecoration: 'underline'}}>
+                    Filters:
+                </h2>
+            </div>
             <div className='row'>
                 {
                     filters.length > 0 ?
                         filters.map(filter => 
-                            <p className='filter'>
+                            <p 
+                                key={
+                                    filters.findIndex((element) => 
+                                    element.pollID === filter.pollID)
+                                }
+                                className='filter'
+                            >
                                 {filter.question} = {filter.answer}
                             </p>)
                     :

@@ -50,6 +50,19 @@
   font-size: 16px;
 }
 
+.nav-button-login {
+  outline: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 3px;
+  padding: 12px 24px;
+  border: 0;
+  color: #000021;
+  background: #0ccc0c;
+  line-height: 1.15;
+  font-size: 16px;
+}
+
 .polls-buttons-tab {
   flex-direction: row;
 }
@@ -118,7 +131,7 @@
   position: relative;
   width: 70%;
   margin: 0 auto;
-  height: auto;
+  height: 80%;
   max-height: 70vh;
   margin-top: calc(100vh - 85vh - 20px);
   background: #fff;

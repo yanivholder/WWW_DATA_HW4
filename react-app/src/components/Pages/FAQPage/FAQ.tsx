@@ -9,7 +9,7 @@ export const FAQ = () => {
             <h2>  FAQ  </h2>
             { faqContent.map((faq) => 
                 <details className='faq' key={faq.qID}>
-                    <summary>{faq.question}</summary>
+                    <summary style={{background: '#a7bef0'}}>{faq.question}</summary>
                     {faq.answer}
                 </details>
             )}                        

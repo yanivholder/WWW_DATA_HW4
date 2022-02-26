@@ -4,6 +4,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram_bot import bot
 from models import db, User, Poll, Answer, Admin
 from flask_login import LoginManager, login_required, login_user, logout_user
+from flask_cors import cross_origin
 
 from config import POSTGRES_CONFIG
 
@@ -274,6 +275,7 @@ QUESTIONS = [
 
 ############################################### TODO: erase
 @app.route('/test/get_polls')
+@cross_origin()
 def test_get_polls():
     return {"questions": QUESTIONS}
 
@@ -284,9 +286,10 @@ def test_poll_info(id):
 
 
 @app.route('/test/login')
+@cross_origin()
 def test_login():
     if request.headers["username"] == "yaniv" and request.headers["password"] == "123":
-        return Response(status=400)
+        return Response(status=200)
     else:
         return Response(status=400)
 
