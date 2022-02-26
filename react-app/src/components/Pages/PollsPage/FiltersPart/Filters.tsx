@@ -21,19 +21,25 @@ export const Filters: React.FC<FiltersProps> = ({
 
     return (
         <div className='polls-filters-container'>
-            <button className='filter-button' onClick={() => { setFilters([]) }}>
-                Reset Filters
-            </button>
-            <button className='filter-button' onClick={() => handleCreatePoll()}>
-                Create Poll
-            </button>
-            {
-                filters.length > 0 ?
-                    filters.map(filter => 
-                        <p> {filter.question} = {filter.answer} </p>)
-                :
-                ""
-            }
+            <div className='filter-button-tab'>
+                <button className='filter-button' onClick={() => { setFilters([]) }}>
+                    Reset Filters
+                </button>
+                <button className='filter-button' onClick={() => handleCreatePoll()}>
+                    Create Poll
+                </button>
+            </div>
+            <div className='row'>
+                {
+                    filters.length > 0 ?
+                        filters.map(filter => 
+                            <p className='filter'>
+                                {filter.question} = {filter.answer}
+                            </p>)
+                    :
+                    <p style={{float: 'left', marginLeft: '10px', marginBottom: '0'}}>No filters yet</p>
+                }
+            </div>
             {isCreatePollOpen && 
                 <CreatePollPopup
                     handleClose={handleCreatePoll}

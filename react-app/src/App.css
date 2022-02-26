@@ -8,6 +8,11 @@
   justify-content: space-around;
 }
 
+.faq {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
 .app-header {
   color: rgb(9, 28, 202);
   font-size: 50px;
@@ -43,6 +48,61 @@
   background: #cc0c0c;
   line-height: 1.15;
   font-size: 16px;
+}
+
+.polls-buttons-tab {
+  flex-direction: row;
+}
+
+.polls-filters-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-button-tab {
+
+}
+
+.filter-button {
+  margin-left: 10px;
+  float: left;
+  outline: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 30px;
+  padding: 10px 24px;
+  border: 0;
+  color: #000021;
+  background: #7a7b81;
+  line-height: 1.15;
+  font-size: 16px;
+  width: 20%;
+}
+
+.filter {
+  background: #eff314;
+  width: 20%;
+  margin-right: 10px;
+  margin-left: 10px;
+  font-size: 10px;
+}
+
+.answers {
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.answers-row {
+  flex-direction: row;
+  width: 100%;
+}
+
+.poll-button {
+  float: left;
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 30%;
 }
 
 .popup-box {
@@ -152,4 +212,8 @@ span.psw {
   font-size: large;
   font-style: italic;
   font-weight: 600;
+}
+
+.row {
+  flex-direction: row;
 }

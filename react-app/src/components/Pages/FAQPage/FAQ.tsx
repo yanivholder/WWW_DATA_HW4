@@ -8,7 +8,7 @@ export const FAQ = () => {
         <div className='faq-page-container'>
             <h2>  FAQ  </h2>
             { faqContent.map((faq) => 
-                <details key={faq.qID}>
+                <details className='faq' key={faq.qID}>
                     <summary>{faq.question}</summary>
                     {faq.answer}
                 </details>

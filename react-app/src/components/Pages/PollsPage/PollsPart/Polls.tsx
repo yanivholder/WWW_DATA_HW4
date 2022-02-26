@@ -38,8 +38,8 @@ export const Polls: React.FC<PollsProps> = ({
                 filters={filters}
                 setFilters={setFilters}
             />
-            <h2> Polls Page </h2>
-            <div> 
+            <h2> Polls Questions </h2>
+            <div className='polls-buttons-tab'> 
             {
                 // TODO: Fix the race between rendering and useEffect
                 questions.length > 0 ?

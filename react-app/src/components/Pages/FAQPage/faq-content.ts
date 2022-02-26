@@ -7,7 +7,7 @@ export type FaqContent = {
 export const faqContent: FaqContent[] = [
     {
         qID: 1,
-        question: 'How much does TelePoll Cost?',
+        question: 'How much does TelePolls Cost?',
         answer: 'It’s completely free!',
     },
     {

@@ -278,8 +278,8 @@ def test_get_polls():
     return {"questions": QUESTIONS}
 
 
-@app.route('/test/poll_info/1')
-def test_poll_info():
+@app.route('/test/poll_info/<id>')
+def test_poll_info(id):
     return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
 
 
