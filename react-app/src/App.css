@@ -1,4 +1,4 @@
-.root {  
+.root {
   text-align: center;
 }
 
@@ -10,7 +10,7 @@
 
 .app-header {
   color: rgb(9, 28, 202);
-  font-size: 50px;  
+  font-size: 50px;
 }
 
 .nav-tab {
@@ -19,7 +19,7 @@
   gap: 5px;
 }
 
-.nav-button {  
+.nav-button {
   outline: none;
   cursor: pointer;
   font-weight: 600;
@@ -29,10 +29,10 @@
   color: #000021;
   background: #6188db;
   line-height: 1.15;
-  font-size: 16px;  
+  font-size: 16px;
 }
 
-.nav-button-logout {  
+.nav-button-logout {
   outline: none;
   cursor: pointer;
   font-weight: 600;
@@ -42,7 +42,7 @@
   color: #000021;
   background: #cc0c0c;
   line-height: 1.15;
-  font-size: 16px;  
+  font-size: 16px;
 }
 
 .popup-box {
@@ -53,7 +53,7 @@
   top: 0;
   left: 0;
 }
- 
+
 .box {
   position: relative;
   width: 70%;
@@ -67,9 +67,9 @@
   border: 1px solid #999;
   overflow: auto;
 }
- 
+
 .close-icon {
-  content: 'x';
+  content: "x";
   cursor: pointer;
   position: fixed;
   right: calc(15% - 30px);
@@ -92,7 +92,8 @@ form {
 }
 
 /* Full-width inputs */
-input[type=text], input[type=password] {
+input[type="text"],
+input[type="password"] {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -117,8 +118,6 @@ button:hover {
   opacity: 0.8;
 }
 
-
-
 /* Center the avatar image inside this container */
 .imgcontainer {
   text-align: center;
@@ -140,4 +139,17 @@ img.avatar {
 span.psw {
   float: right;
   padding-top: 16px;
+}
+
+.about-page-container {
+  background: rgb(67, 201, 123);
+}
+
+.faq-page-container {
+  text-align: left;
+  padding: 40px;
+  line-height: 5ch;
+  font-size: large;
+  font-style: italic;
+  font-weight: 600;
 }

@@ -103,6 +103,15 @@ class Poll(db.Model):
             return [p.poll_id for p in polls]
 
     @staticmethod
+    def poll_exists(poll__id: int):
+        poll = db.session.query(Poll).filter_by(poll_id=poll__id).first()
+        if poll is None:
+            return False
+        else:
+            return True
+
+
+    @staticmethod
     def get_all_polls_id_and_content():
         polls = db.session.query(Poll).filter_by().all()
         if polls is None:
@@ -111,11 +120,16 @@ class Poll(db.Model):
             return [(p.poll_id, p.content) for p in polls]
 
     @staticmethod
-    def add_new_poll_and_default_answers(new_poll_content: str, new_poll_answers: str, relevant_users,
+    def add_new_poll_and_default_answers(new_poll_content: str, new_poll_answers: list[str], relevant_users,
                                          do_commit=True) -> int:
         current_poll_id = Poll.poll_unique_id_counter
         Poll.poll_unique_id_counter += 1
-        db.session.add(Poll(poll_id=current_poll_id, content=new_poll_content, possible_answers=new_poll_answers))
+
+        # create a string the concatenates the answers for saving in DB
+        con_new_poll_answers = new_poll_answers[0] + ',' + new_poll_answers[1]  # compulsory answers
+        for i in range(2, len(new_poll_answers)):                               # voluntary answers
+            con_new_poll_answers += ',' + new_poll_answers[1]
+        db.session.add(Poll(poll_id=current_poll_id, content=new_poll_content, possible_answers=con_new_poll_answers))
 
         Answer.add_new_poll_default_answers(relevant_users, current_poll_id, do_commit=False)
         if do_commit:
@@ -134,8 +148,12 @@ class Answer(db.Model):
         return f'<Admin {self.username}'
 
     @staticmethod
-    def get_current_answer(user_id, poll_id):
-        return db.session.query(Answer).filter_by(user_id=user_id, poll_id=poll_id).first().answer
+    def get_current_user_answer(user_id, poll_id):
+        ans = db.session.query(Answer).filter_by(user_id=user_id, poll_id=poll_id).first()
+        if ans is None:
+            return None
+        else:
+            return ans.answer
 
     @staticmethod
     def add_new_poll_default_answers(relevant_users, poll_id, do_commit=True):
@@ -160,6 +178,15 @@ class Answer(db.Model):
             return []
         else:
             return [row.user_id for row in relevant_users]
+
+    @staticmethod
+    def user_in_poll_audience(user__id, poll__id):
+        """ """
+        user = db.session.query(Answer).filter_by(poll_id=poll__id, user_id=user__id).first()
+        if user is None:
+            return False
+        else:
+            return True
 
     @staticmethod
     def users_that_answered_a_on_q(poll_id: int, specific_answer: str):

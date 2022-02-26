@@ -12,6 +12,7 @@ from sqlalchemy_utils import database_exists, create_database
 from app import app
 from models import db
 from telegram_bot import run_telegram_bot
+import time
 
 # Enable logging
 logging.basicConfig(
@@ -55,8 +56,8 @@ if __name__ == "__main__":
     bot_thread = TelegramThread()
     bot_thread.start()
 
-    # react_process = Process(target=run_react)
-    # react_process.start()
+    react_process = Process(target=run_react)
+    react_process.start()
 
 
 

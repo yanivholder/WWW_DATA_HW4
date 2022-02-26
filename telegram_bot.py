@@ -59,41 +59,6 @@ def remove(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(response.text)
 
 
-def answer(update: Update, context: CallbackContext) -> None:
-    msg = update.message
-    if len(msg.text.split(' ')) < 3:
-        msg.reply_text("You need to specify an answer and a poll")
-        return
-    response = requests.get(
-        url=HOME_PAGE + 'answer',
-        params={
-            'answer': msg.text.split(' ')[1],
-            'poll': msg.text.split(' ')[2],
-            'chat_id': msg.chat.id
-        }
-    )
-    update.message.reply_text(response.text)
-
-
-def poll(update: Update, context: CallbackContext) -> None:
-    msg = update.message
-
-    response = requests.get(
-        url=HOME_PAGE + 'poll',
-        params={
-            # TODO - talk to holder about how it really arrives
-            # 'poll_content': msg.text.split(' ')[1],
-            # 'possible_answers': msg.text.split(' ')[2],
-            # 'filter': msg.text.split(' ')[3]
-            'poll_content': "a pre-fixed question",
-            'possible_answers': "answer1,answer2,answer3,answer4",
-            'filter': "1,answer3 2,answer1",
-            'itr': msg.text.split(' ')[1]
-        }
-    )
-    update.message.reply_text(response.text)
-
-
 def broadcast_poll(recipients: list, poll_id, poll_content, poll_answers):
     for recip in recipients:
 
@@ -123,37 +88,6 @@ def queryHandler(update: Update, context: CallbackContext):
     update.effective_message.reply_text(response.text)
 
 
-def add_admin(update: Update, context: CallbackContext):
-    msg = update.message
-    if len(msg.text.split(' ')) < 3:
-        msg.reply_text("You need to specify an admin name and a password")
-        return
-    response = requests.get(
-        url=HOME_PAGE + 'add_admin',
-        params={
-            'admin_name': msg.text.split(' ')[1],
-            'admin_password': msg.text.split(' ')[2],
-            'chat_id': msg.chat.id
-        }
-    )
-    update.message.reply_text(response.text)
-
-
-def check_admin(update: Update, context: CallbackContext):
-    msg = update.message
-    if len(msg.text.split(' ')) < 3:
-        msg.reply_text("You need to specify an admin name and a password")
-        return
-    response = requests.get(
-        url=HOME_PAGE + 'check_admin',
-        params={
-            'admin_name': msg.text.split(' ')[1],
-            'admin_password': msg.text.split(' ')[2],
-        }
-    )
-    update.message.reply_text(response.text)
-
-
 def run_telegram_bot() -> None:
     """Start the bot."""
     # Create the Updater and pass it your bot's token.
@@ -166,11 +100,6 @@ def run_telegram_bot() -> None:
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("register", register))
     dispatcher.add_handler(CommandHandler("remove", remove))
-
-    # dispatcher.add_handler(CommandHandler("answer", answer))
-    dispatcher.add_handler(CommandHandler("poll", poll))
-    dispatcher.add_handler(CommandHandler("add_admin", add_admin))
-    dispatcher.add_handler(CommandHandler("check_admin", check_admin))
 
     dispatcher.add_handler(CallbackQueryHandler(queryHandler))
 

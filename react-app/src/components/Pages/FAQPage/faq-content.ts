@@ -7,12 +7,12 @@ export type FaqContent = {
 export const faqContent: FaqContent[] = [
     {
         qID: 1,
-        question: 'How much does TelePoll Cost??',
+        question: 'How much does TelePoll Cost?',
         answer: 'It’s completely free!',
     },
     {
         qID: 2,
-        question: 'What is a Restricted Poll?',
+        question: 'What is a Filtered Poll?',
         answer: 'An admin can chose previous poll answers as filters on he’s new poll audience.' +
             ' For example: if we have previous polls such as “are you a student at the Technion?” ' +
             'and “what is your age?”\n We can choose to send the next poll only to those who answered' +
@@ -21,7 +21,7 @@ export const faqContent: FaqContent[] = [
     {
         qID: 3,
         question: 'How to Run/Send a Poll?',
-        answer: 'Just enter the “Polls” section, chose filters (or don’t) and use the “new poll”' +
+        answer: 'Just enter the “Polls” section, choose filters (or don’t) and use the “new poll”' +
             ' interface to send your next poll to all your audience.',
     },
     {
@@ -37,7 +37,7 @@ export const faqContent: FaqContent[] = [
     },
     {
         qID: 6,
-        question: 'Can I delte a Poll after I sent it?',
+        question: 'Can I delete a Poll after I sent it?',
         answer: 'Polls cannot be deleted once sent'
     }
 
