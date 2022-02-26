@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { server_url } from "../../../../app-constants";
 import { AnswerInfo, Filter, Question } from "../../../../types";
 import { Chart } from './Chart';
 
@@ -19,7 +20,7 @@ export const Popup: React.FC<PopupProps> = ({
     const [questionInfo, setQuestionInfo] = useState<AnswerInfo[]>([]);
     
     useEffect(() => {
-        fetch(`/test/poll_info/${question.pollID}`)
+        fetch(`${server_url}/test/poll_info/${question.pollID}`)
         .then(data => data.json())
         .then(data => { 
             let answerInfoList: AnswerInfo[] = [];

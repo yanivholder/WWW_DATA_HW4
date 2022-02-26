@@ -1,6 +1,7 @@
 import { response } from 'express';
 import { async } from 'q';
 import React, { useState } from 'react';
+import { server_url } from '../../../app-constants';
 import '../../../App.css';
 
 
@@ -34,7 +35,7 @@ export const CreateAdmin = () => {
         }
         // TODO: add salt to password
         else {
-            fetch('/test/add_admin',
+            fetch(`${server_url}/test/add_admin`,
             {
                 method: 'GET',
                 headers: {

@@ -1,6 +1,6 @@
 import { longStackSupport } from 'q';
 import React from 'react';
-import { pages } from '../../app-constants';
+import { pages, server_url } from '../../app-constants';
 import '../../App.css';
 
 export interface NavbarProps {
@@ -44,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
 
     const handleLogout = () => {
-        fetch('/test/logout');
+        fetch(`${server_url}/test/logout`);
         // Check response
         changePage(4);
         setIsLoggedIn(false);

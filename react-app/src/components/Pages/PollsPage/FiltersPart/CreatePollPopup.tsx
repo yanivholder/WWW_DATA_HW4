@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { string } from "yargs";
+import { server_url } from "../../../../app-constants";
 import { AnswerInfo, Filter } from "../../../../types";
  
 export interface CreatePollPopupProps {
@@ -34,7 +35,7 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
             if(answer1 === "" || answer2 === "") {
                 alert("You have to fill at least 2 answers");
             } else {
-                fetch('/test/add_poll',
+                fetch(`${server_url}/test/add_poll`,
                 {
                     method: 'GET',
                     headers: {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Question, Filter } from '../../../../types';
 import { PollButton } from './PollButton';
 import { Filters } from '../FiltersPart/Filters'
+import { server_url } from '../../../../app-constants';
 
 export interface PollsProps {
     filters: Filter[];
@@ -17,7 +18,7 @@ export const Polls: React.FC<PollsProps> = ({
    const [questions, setQuestions] = useState<Question[]>([]);
 
    useEffect(() => {
-       fetch('/test/get_polls')
+       fetch(`${server_url}/test/get_polls`)
        .then(data => data.json())
        .then(data => { 
            let typeQuestions: Question[] = [];
