@@ -117,7 +117,7 @@ def filter_users_by_answers(predicate: str) -> list:  # get back only users afte
     if predicate is None or not predicate:
         return all_users
     else:
-        pred = [(int(qna.split(',')[0]), qna.split(',')[1]) for qna in predicate.split(' ')]
+        pred = [(int(qna.split(',')[0]), qna.split(',')[1].replace(' ', '_')) for qna in predicate.split('$')]
         partial_group_users = all_users
         for qna in pred:
             partial_group_users = intersection(partial_group_users, Answer.users_that_answered_a_on_q(qna[0], qna[1]))
