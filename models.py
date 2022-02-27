@@ -136,7 +136,7 @@ class Poll(db.Model):
         # create a string the concatenates the answers for saving in DB
         con_new_poll_answers = new_poll_answers[0] + ',' + new_poll_answers[1]  # compulsory answers
         for i in range(2, len(new_poll_answers)):                               # voluntary answers
-            con_new_poll_answers += ',' + new_poll_answers[1]
+            con_new_poll_answers += ',' + new_poll_answers[i]
         db.session.add(Poll(poll_id=current_poll_id, content=new_poll_content, possible_answers=con_new_poll_answers))
 
         Answer.add_new_poll_default_answers(relevant_users, current_poll_id, do_commit=False)

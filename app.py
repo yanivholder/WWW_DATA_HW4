@@ -96,7 +96,7 @@ def remove_request():
 
 def broadcast_poll(recipients: list, poll_id, poll_content, poll_answers):
     markup = InlineKeyboardMarkup([
-        [InlineKeyboardButton(f"{ans}", callback_data=f"/answer {ans} {poll_id}")]
+        [InlineKeyboardButton(f"{ans.replace('_', ' ')}", callback_data=f"/answer {ans} {poll_id}")]
         for ans in poll_answers])
 
     for recip in recipients:
@@ -201,7 +201,7 @@ def handle_get_info_about_poll(poll_id) -> list[[str, int]]:
     try:
         if int(poll_id) not in Poll.get_all_polls_id():
             return {}
-        return Answer.get_poll_answer_count(poll_id)
+        return {'data': Answer.get_poll_answer_count(poll_id)}
     except:
         return Response("Unexpected error", status=500)
 
