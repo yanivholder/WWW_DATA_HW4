@@ -54,10 +54,27 @@ export const Popup: React.FC<PopupProps> = ({
         }
     }
 
+    const handleRemovePoll = () => {
+      fetch(`${server_url}/remove_poll/${question.pollID}`)
+      .then(resp => {
+          if(resp.status === 200) {
+              alert("Poll removed successfully");
+          }
+          else {
+              alert("A problem occured");
+          }    
+      });
+    }
+
     return (
     <div className="popup-box">
       <div className="box">
-      <h2 style={{marginBottom: '20px', marginTop: '0', textDecoration: 'underline'}}>{question.content}</h2>
+        <button style={{float: 'right', background: '#cc0c0c'}} onClick={() => handleRemovePoll}>
+          Remove Poll
+        </button>
+        <h2 style={{marginBottom: '20px', marginTop: '0', textDecoration: 'underline'}}>
+          {question.content}
+        </h2>
         <span className="close-icon" onClick={handleClose}>x</span>
         <div style={{position: 'relative', float: 'left', width: '50%', height: '30vh'}}>
           <Chart question={question} questionInfo={questionInfo}/>

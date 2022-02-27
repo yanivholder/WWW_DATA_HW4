@@ -33,7 +33,6 @@ export const CreateAdmin = () => {
         else if(password !== confirmPassword) {
             alert("Passwords are not the same");
         }
-        // TODO: add salt to password
         else {
             await fetch(`${server_url}/add_admin`,
             {
