@@ -38,7 +38,7 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
     }
 
     const QuestionAndAnswerValidation = (element: string) => {
-        return ((element.length <= 30) && (element.match("^[A-Za-z0-9]*$")));
+        return ((element.length <= 30) && (element.match("^[A-Za-z0-9?]*$")));
     }
 
     const handleSubmit = async () => {
@@ -54,7 +54,7 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
                     (!QuestionAndAnswerValidation(answer3)) ||
                     (!QuestionAndAnswerValidation(answer4))
                 ) {
-            alert("The question and the answers should contain only letters and numner and be at max 30 characters");
+            alert("The question and the answers should contain only letters and number, and ?. Also, is can be at max 30 characters");
         }
         else if(new Set(answerArray).size !== answerArray.length) {
             alert("All answers must be different");
