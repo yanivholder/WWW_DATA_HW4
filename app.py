@@ -30,7 +30,6 @@ db.init_app(app)
 
 @app.route('/register')
 def register_request():
-    # TODO - what if request.method is not GET? should we return error? or not deal with this case
     try:
         new_user_name = request.args['username']
         chat_id = request.args['chat_id']
@@ -98,8 +97,8 @@ def broadcast_poll(recipients: list, poll_id, poll_content, poll_answers):
         try:
             bot.send_message(chat_id=recip, text=poll_content, reply_markup=markup)
         except telegram.error.TelegramError:
+            Poll.remove_poll(poll_id)
             return False
-
     return True
 
 
@@ -132,7 +131,7 @@ def handle_answer_poll():
 
         poll_pos_ans = Poll.get_poll_all_possible_answers(answered_poll)
         if len(poll_pos_ans) == 0:
-            return Response("There's no such poll.", status=404)
+            return Response("There's no such poll.\n(it was cancelled)", status=404)
 
         user_ans = Answer.get_current_user_answer(chat_id, answered_poll)
         if user_ans is None:
@@ -168,15 +167,23 @@ def handle_add_poll():
 
         relevant_users = filter_users_by_answers(predicate)
         new_poll_id = Poll.add_new_poll_and_default_answers(new_poll_content, new_poll_answers, relevant_users)
-        # Answer.add_new_poll_default_answers(relevant_users, new_poll_id)
 
         if broadcast_poll(relevant_users, new_poll_id, new_poll_content, new_poll_answers):
             return Response("Poll successfully sent to all relevant users", status=200)
         else:
-            return Response("Failed to send poll to some of the users", status=500)
+            return Response("Failed to send poll to some of the users,\nCancelled poll for all users that received it", status=500)
     except:
         return Response("Unexpected error", status=500)
 
+
+@app.route('/remove_poll/<poll_id>')
+@cross_origin()
+# @login_required
+def handle_remove_poll(poll_id):
+    try:
+        Poll.remove_poll(poll_id)
+    except Exception as e:
+        return Response(f"Unexpected error", status=500)
 
 @app.route('/get_polls')
 @cross_origin()
@@ -255,55 +262,6 @@ def page_not_found(e):
 def page_not_found(e):
     return Response("500 Internal Error", status=404)
 
-
-############################################### TODO: erase
-
-QUESTIONS = [
-    (1, "What is your eyes color"),
-    (2, "Do you love apples"),
-    (3, "How much legs 4 spiders and two people have?")
-]
-
-
-# @app.route('/test/logout')
-# @cross_origin()
-# def test_get_polls():
-#     logout_user()
-#     pass
-
-
-# @app.route('/test/get_polls')
-# @cross_origin()
-# def test_get_polls():
-#     return {"questions": QUESTIONS}
-#
-#
-# @app.route('/test/poll_info/<id>')
-# @cross_origin()
-# def test_poll_info(id):
-#     return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
-#
-#
-# @app.route('/test/login')
-# @cross_origin()
-# def test_login():
-#     if request.headers["username"] == "yaniv" and request.headers["password"] == "123":
-#         login_user(Admin.get_by_name("yaniv"))
-#         return Response(status=200)
-#     else:
-#         return Response(status=400)
-#
-# @app.route('/test/add_admin')
-# @cross_origin()
-# def test_add_admin():
-#     return Response(status=500)
-#
-# @app.route('/test/add_poll')
-# @cross_origin()
-# def test_add_poll():
-#     return Response(status=409)
-
-###################################################### \erase
 
 if __name__ == '__main__':
     app.run(debug=True)

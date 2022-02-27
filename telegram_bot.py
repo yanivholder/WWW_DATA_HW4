@@ -5,7 +5,8 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 from config import HOME_PAGE
 
-TOKEN = '5000025980:AAEd8VB5A30jAC48vIaYQJIg3zup9q2GbqM'
+# TOKEN = '5000025980:AAEd8VB5A30jAC48vIaYQJIg3zup9q2GbqM'  # - old
+TOKEN = '5157669737:AAFMJcwpoL_QM7LN5_RY8UaPPbr1TYiPzPk'    # new
 bot = telegram.Bot(token=TOKEN)
 
 
@@ -108,12 +109,6 @@ def run_telegram_bot() -> None:
 
     # Start the Bot
     updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    # TODO: maybe fix it
-    # updater.idle()
 
 
 if __name__ == '__main__':

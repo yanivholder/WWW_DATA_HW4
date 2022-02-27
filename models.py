@@ -109,7 +109,6 @@ class Poll(db.Model):
         else:
             return True
 
-
     @staticmethod
     def get_all_polls_id_and_content():
         polls = db.session.query(Poll).filter_by().all()
@@ -126,16 +125,14 @@ class Poll(db.Model):
         else:
             return max_poll.poll_id
 
-
-
     @staticmethod
     def add_new_poll_and_default_answers(new_poll_content: str, new_poll_answers: list[str], relevant_users,
                                          do_commit=True) -> int:
 
-        current_poll_id = Poll.get_max_poll_id()+1
+        current_poll_id = Poll.get_max_poll_id() + 1
         # create a string the concatenates the answers for saving in DB
         con_new_poll_answers = new_poll_answers[0] + ',' + new_poll_answers[1]  # compulsory answers
-        for i in range(2, len(new_poll_answers)):                               # voluntary answers
+        for i in range(2, len(new_poll_answers)):  # voluntary answers
             con_new_poll_answers += ',' + new_poll_answers[i]
         db.session.add(Poll(poll_id=current_poll_id, content=new_poll_content, possible_answers=con_new_poll_answers))
 
@@ -206,8 +203,13 @@ class Answer(db.Model):
         ret = [("Did not answer yet", len(Answer.users_that_answered_a_on_q(poll_id, "N.A")))]
         for pos_ans in Poll.get_poll_all_possible_answers(poll_id):
             ret.append((pos_ans.replace('_', ' '), len(Answer.users_that_answered_a_on_q(poll_id, pos_ans))))
-
         return ret
+
+    @staticmethod
+    def remove_poll(poll_id):
+        Poll.query.filter_by(poll_id=poll_id).delete()
+        Answer.query.filter_by(poll_id=poll_id).delete()
+        db.session.commit()
 
 
 class Admin(UserMixin, db.Model):
@@ -215,14 +217,12 @@ class Admin(UserMixin, db.Model):
     __tablename__ = 'admins'
     username = db.Column(db.String, primary_key=True, nullable=False)
     password_hash = db.Column(db.String(128), unique=False, index=False, nullable=False)
-    # id = db.Column(db.Integer,primary_key=True, unique=True, nullable=False)
-
 
     def __repr__(self):
         return f'<Admin {self.username}'
 
     def get_id(self):
-        return self.username
+        return str(self.username)
 
     @property
     def password(self):
@@ -238,8 +238,6 @@ class Admin(UserMixin, db.Model):
     @staticmethod
     def register_new_admin(user_name, pwd, do_commit=True):
         """ Add another admin to the system """
-        # db.session.add(Admin(username=user_name, password=pwd, admin_id=Admin.admin_unique_id_counter))
-        # Admin.admin_unique_id_counter += 1
         db.session.add(Admin(username=user_name, password=pwd))
         if do_commit:
             db.session.commit()
@@ -248,7 +246,6 @@ class Admin(UserMixin, db.Model):
     def register_super_admin(input_db):
         """ Add first default admin to the system,
         different func because we need to specify db before app gives db by context """
-        # input_db.session.add(Admin(username="admin", password="236369", admin_id=666))
         input_db.session.add(Admin(username="admin", password="236369"))
         input_db.session.commit()
 
