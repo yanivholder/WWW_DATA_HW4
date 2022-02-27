@@ -35,7 +35,7 @@ export const CreateAdmin = () => {
         }
         // TODO: add salt to password
         else {
-            fetch(`${server_url}/test/add_admin`,
+            fetch(`${server_url}/add_admin`,
             {
                 method: 'GET',
                 headers: {

@@ -20,9 +20,10 @@ export const Popup: React.FC<PopupProps> = ({
     const [questionInfo, setQuestionInfo] = useState<AnswerInfo[]>([]);
     
     useEffect(() => {
-        fetch(`${server_url}/test/poll_info/${question.pollID}`)
+        fetch(`${server_url}/poll_info/${question.pollID}`)
         .then(data => data.json())
         .then(data => { 
+            console.log(data.data);
             let answerInfoList: AnswerInfo[] = [];
             data.data.forEach((element: any) => {
                  const newAnswerInfo: AnswerInfo = {

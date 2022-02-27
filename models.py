@@ -1,7 +1,6 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import CheckConstraint
-from sqlalchemy import PrimaryKeyConstraint
+from sqlalchemy import PrimaryKeyConstraint, desc, CheckConstraint
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -120,11 +119,20 @@ class Poll(db.Model):
             return [(p.poll_id, p.content) for p in polls]
 
     @staticmethod
+    def get_max_poll_id():
+        max_poll = db.session.query(Poll).filter_by().order_by(desc(Poll.poll_id)).first()
+        if max_poll is None:
+            return 0
+        else:
+            return max_poll.poll_id
+
+
+
+    @staticmethod
     def add_new_poll_and_default_answers(new_poll_content: str, new_poll_answers: list[str], relevant_users,
                                          do_commit=True) -> int:
-        current_poll_id = Poll.poll_unique_id_counter
-        Poll.poll_unique_id_counter += 1
 
+        current_poll_id = Poll.get_max_poll_id()+1
         # create a string the concatenates the answers for saving in DB
         con_new_poll_answers = new_poll_answers[0] + ',' + new_poll_answers[1]  # compulsory answers
         for i in range(2, len(new_poll_answers)):                               # voluntary answers
@@ -195,19 +203,20 @@ class Answer(db.Model):
 
     @staticmethod
     def get_poll_answer_count(poll_id):
-        answers = ["N.A"]
-        answers += Poll.get_poll_all_possible_answers(poll_id)
-        ret = {}
-        for pos_ans in answers:
-            ret[pos_ans] = len(Answer.users_that_answered_a_on_q(poll_id, pos_ans))
+        ret = [("Did not answer yet", len(Answer.users_that_answered_a_on_q(poll_id, "N.A")))]
+        for pos_ans in Poll.get_poll_all_possible_answers(poll_id):
+            ret.append((pos_ans.replace('_', ' '), len(Answer.users_that_answered_a_on_q(poll_id, pos_ans))))
 
         return ret
 
 
 class Admin(UserMixin, db.Model):
+    # admin_unique_id_counter = 1000000
     __tablename__ = 'admins'
     username = db.Column(db.String, primary_key=True, nullable=False)
     password_hash = db.Column(db.String(128), unique=False, index=False, nullable=False)
+    # id = db.Column(db.Integer,primary_key=True, unique=True, nullable=False)
+
 
     def __repr__(self):
         return f'<Admin {self.username}'
@@ -226,6 +235,8 @@ class Admin(UserMixin, db.Model):
     @staticmethod
     def register_new_admin(user_name, pwd, do_commit=True):
         """ Add another admin to the system """
+        # db.session.add(Admin(username=user_name, password=pwd, admin_id=Admin.admin_unique_id_counter))
+        # Admin.admin_unique_id_counter += 1
         db.session.add(Admin(username=user_name, password=pwd))
         if do_commit:
             db.session.commit()
@@ -234,6 +245,7 @@ class Admin(UserMixin, db.Model):
     def register_super_admin(input_db):
         """ Add first default admin to the system,
         different func because we need to specify db before app gives db by context """
+        # input_db.session.add(Admin(username="admin", password="236369", admin_id=666))
         input_db.session.add(Admin(username="admin", password="236369"))
         input_db.session.commit()
 

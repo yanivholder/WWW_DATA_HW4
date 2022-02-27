@@ -25,7 +25,7 @@ export const Login: React.FC<LoginProps> = ({
     const handleLogin = (e: any) => {
         e.preventDefault();
         
-        fetch(`${server_url}/test/login`,
+        fetch(`${server_url}/login`,
             {
                 method: 'GET',
                 headers: {

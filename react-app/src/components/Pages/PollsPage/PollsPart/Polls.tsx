@@ -18,7 +18,7 @@ export const Polls: React.FC<PollsProps> = ({
    const [questions, setQuestions] = useState<Question[]>([]);
 
    useEffect(() => {
-       fetch(`${server_url}/test/get_polls`)
+       fetch(`${server_url}/get_polls`)
        .then(data => data.json())
        .then(data => { 
            let typeQuestions: Question[] = [];

@@ -21,13 +21,13 @@ logging.basicConfig(
 
 
 def flask_run() -> None:
-    # if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
-    #     print("db doesn't exists. creating db:")
-    #     create_database(app.config['SQLALCHEMY_DATABASE_URI'])
-    #     with app.app_context():
-    #         db.create_all()
-    #         db.session.commit()
-    #         Admin.register_super_admin(db)
+    if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
+        print("db doesn't exists. creating db:")
+        create_database(app.config['SQLALCHEMY_DATABASE_URI'])
+        with app.app_context():
+            db.create_all()
+            db.session.commit()
+            Admin.register_super_admin(db)
     # else:
     #     with app.app_context():
     #         db.drop_all()
@@ -43,7 +43,7 @@ class TelegramThread(threading.Thread):
 
 
 def run_react():
-    os.chdir(os.path.join(os.getcwd(), r'react-app'))
+    os.chdir(r'C:\Users\eilon\Desktop\Technion\semester6\WWW\WWW_DATA_HW4\react-app')
     # subprocess.check_call('npm install', shell=True)
     subprocess.check_call('npm start', shell=True)
 
@@ -53,8 +53,8 @@ if __name__ == "__main__":
 
     Process(target=flask_run).start()
 
-    # bot_thread = TelegramThread()
-    # bot_thread.start()
+    bot_thread = TelegramThread()
+    bot_thread.start()
 
 
 

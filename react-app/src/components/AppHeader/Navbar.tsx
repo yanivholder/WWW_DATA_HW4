@@ -44,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
 
     const handleLogout = () => {
-        fetch(`${server_url}/test/logout`);
+        fetch(`${server_url}/logout`);
         // Check response
         changePage(4);
         setIsLoggedIn(false);

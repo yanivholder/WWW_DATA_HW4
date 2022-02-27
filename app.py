@@ -18,8 +18,8 @@ login_manager.init_app(app)
 
 
 @login_manager.user_loader
-def load_user(admin_id):
-    return Admin.query.get(int(admin_id))
+def load_user(admin_name):
+    return Admin.query.get(str(admin_name))
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'''
@@ -124,28 +124,6 @@ def filter_users_by_answers(predicate: str) -> list:  # get back only users afte
         return partial_group_users
 
 
-@app.route('/add_poll')
-def handle_add_poll():
-    try:
-        new_poll_content = request.headers.Question
-        new_poll_answers = [request.headers.Answer1, request.headers.Answer2]  # compulsory answers
-        for pos_ans in [request.headers.Answer3, request.headers.Answer4]:  # voluntary answers
-            if pos_ans != "":
-                new_poll_answers += pos_ans
-        predicate = request.headers.Filters  # this is a list of previous polls and specific answers to filter by
-
-        relevant_users = filter_users_by_answers(predicate)
-        new_poll_id = Poll.add_new_poll_and_default_answers(new_poll_content, new_poll_answers, relevant_users)
-        # Answer.add_new_poll_default_answers(relevant_users, new_poll_id)
-
-        if broadcast_poll(relevant_users, new_poll_id, new_poll_content, new_poll_answers):
-            return Response("Poll successfully sent to all relevant users", status=200)
-        else:
-            return Response("Failed to send poll to some of the users", status=500)
-    except:
-        return Response("Unexpected error", status=500)
-
-
 @app.route('/answer')
 def handle_answer_poll():
     """Used when user responds to a poll via telegram and send it's answer"""
@@ -176,13 +154,64 @@ def handle_answer_poll():
     except:
         return Response("Unexpected error", status=500)
 
-@app.route('/add_admin')
-def handle_add_admin():
-    # new_admin_name = request.args['admin_name']
-    # new_admin_password = request.args['admin_password']
+
+@app.route('/add_poll')
+@cross_origin()
+# @login_required
+def handle_add_poll():
     try:
-        new_admin_name = request.headers.Username
-        new_admin_password = request.headers.Password
+        new_poll_content = request.headers['question']
+        new_poll_answers = [request.headers['answer1'], request.headers['answer2']]  # compulsory answers
+        for pos_ans in [request.headers['answer3'], request.headers['answer4']]:  # voluntary answers
+            if pos_ans != "":
+                new_poll_answers += [pos_ans]
+
+        for i in range(len(new_poll_answers)):
+            new_poll_answers[i] = new_poll_answers[i].replace(' ', '_')
+
+        predicate = request.headers['filters']  # this is a list of previous polls and specific answers to filter by
+
+        relevant_users = filter_users_by_answers(predicate)
+        new_poll_id = Poll.add_new_poll_and_default_answers(new_poll_content, new_poll_answers, relevant_users)
+        # Answer.add_new_poll_default_answers(relevant_users, new_poll_id)
+
+        if broadcast_poll(relevant_users, new_poll_id, new_poll_content, new_poll_answers):
+            return Response("Poll successfully sent to all relevant users", status=200)
+        else:
+            return Response("Failed to send poll to some of the users", status=500)
+    except:
+        return Response("Unexpected error", status=500)
+
+
+@app.route('/get_polls')
+@cross_origin()
+def handle_get_polls():  # return dict {questions: list[]} where list is of (poll_id, poll_content)
+    """ Return all polls recorded in system, for displaying in UI """
+    try:
+        return {'questions': Poll.get_all_polls_id_and_content()}
+    except:
+        return Response("Unexpected error", status=500)
+
+
+@app.route('/poll_info/<poll_id>')
+@cross_origin()
+# @login_required
+def handle_get_info_about_poll(poll_id) -> list[[str, int]]:
+    """ Return answer count for each possible answer of the poll with id <poll_id> """
+    try:
+        if int(poll_id) not in Poll.get_all_polls_id():
+            return {}
+        return Answer.get_poll_answer_count(poll_id)
+    except:
+        return Response("Unexpected error", status=500)
+
+
+@app.route('/add_admin')
+@cross_origin()
+def handle_add_admin():
+    try:
+        new_admin_name = request.headers['username']
+        new_admin_password = request.headers['password']
         if Admin.is_registered(new_admin_name):
             return Response("This admin username is taken.\nPlease select a different name.", status=409)
         Admin.register_new_admin(new_admin_name, new_admin_password)
@@ -191,54 +220,17 @@ def handle_add_admin():
         return Response("Unexpected error", status=500)
 
 
-@app.route('/check_admin')
-def handle_check_admin():
-    # existing_admin_name = request.args['admin_name']
-    # existing_admin_password = request.args['admin_password']
-    try:
-        existing_admin_name = request.headers.Username
-        existing_admin_password = request.headers.Password
-        if not Admin.is_registered(existing_admin_name):
-            return Response("No admin under this username.", status=404)
-        if Admin.authenticate_admin(existing_admin_name, existing_admin_password):
-            return Response(f"Admin {existing_admin_name} Successfully authenticated.", status=200)
-        else:
-            return Response(f"Admin {existing_admin_name} authentication failed.", status=401)
-    except:
-        return Response("Unexpected error", status=500)
-
-
-@app.route('/get_polls')
-@login_required
-def handle_get_polls():  # return dict {questions: list[]} where list is of (poll_id, poll_content)
-    """ Return all polls recorded in system, for displaying in UI """
-    try:
-        return {'questions': Poll.get_all_polls_id_and_content()}
-    except:
-        return Response("Unexpected error", status=500)
-
-@app.route('/poll_info/<poll_id>')
-@login_required
-def handle_get_info_about_poll(poll_id) -> dict[str: int]:
-    """ Return answer count for each possible answer of the poll with id <poll_id> """
-    try:
-        if poll_id not in Poll.get_all_polls_id():
-            return {}
-        return Answer.get_poll_answer_count(poll_id)
-    except:
-        return Response("Unexpected error", status=500)
-
-
 @app.route('/login', methods=['GET', 'POST'])
+@cross_origin()
 def login():
     try:
-        existing_admin_name = request.args['admin_name']
-        existing_admin_password = request.args['admin_password']
+        existing_admin_name = request.headers['username']
+        existing_admin_password = request.headers['password']
         admin = Admin.get_by_name(existing_admin_name)
         if admin is None:
             return Response("No admin under this username.", status=404)
         if Admin.authenticate_admin(existing_admin_name, existing_admin_password):
-            login_user(admin)
+            # login_user(admin.username)
             return Response(f"Admin {existing_admin_name} Successfully logged-in.", status=200)
         else:
             return Response(f"Admin {existing_admin_name} logging-in failed.", status=401)
@@ -246,10 +238,11 @@ def login():
         return Response("Unexpected error", status=500)
 
 @app.route('/logout')
-@login_required
+@cross_origin()
+# @login_required
 def logout():
     try:
-        logout_user()
+        # logout_user()
         return Response(f"Successfully logged-out.", status=200)
     except:
         return Response("Unexpected error", status=500)
@@ -281,6 +274,7 @@ def test_get_polls():
 
 
 @app.route('/test/poll_info/<id>')
+@cross_origin()
 def test_poll_info(id):
     return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
 
@@ -294,10 +288,12 @@ def test_login():
         return Response(status=400)
 
 @app.route('/test/add_admin')
+@cross_origin()
 def test_add_admin():
     return Response(status=200)
 
 @app.route('/test/add_poll')
+@cross_origin()
 def test_add_poll():
     print(request.headers)
     return Response(status=200)
