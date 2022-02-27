@@ -38,7 +38,7 @@ export const faqContent: FaqContent[] = [
     {
         qID: 6,
         question: 'Can I delete a Poll after I sent it?',
-        answer: 'Polls cannot be deleted once sent'
+        answer: 'Yes, click the poll and the click the remove button'
     }
 
 ]

@@ -272,36 +272,35 @@ QUESTIONS = [
 #     pass
 
 
-# @app.route('/test/get_polls')
-# @cross_origin()
-# def test_get_polls():
-#     return {"questions": QUESTIONS}
-#
-#
-# @app.route('/test/poll_info/<id>')
-# @cross_origin()
-# def test_poll_info(id):
-#     return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
-#
-#
-# @app.route('/test/login')
-# @cross_origin()
-# def test_login():
-#     if request.headers["username"] == "yaniv" and request.headers["password"] == "123":
-#         login_user(Admin.get_by_name("yaniv"))
-#         return Response(status=200)
-#     else:
-#         return Response(status=400)
-#
-# @app.route('/test/add_admin')
-# @cross_origin()
-# def test_add_admin():
-#     return Response(status=500)
-#
-# @app.route('/test/add_poll')
-# @cross_origin()
-# def test_add_poll():
-#     return Response(status=409)
+@app.route('/test/get_polls')
+@cross_origin()
+def test_get_polls():
+    return {"questions": QUESTIONS}
+
+
+@app.route('/test/poll_info/<id>')
+@cross_origin()
+def test_poll_info(id):
+    return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
+
+
+@app.route('/test/login')
+@cross_origin()
+def test_login():
+    if request.headers["username"] == "yaniv" and request.headers["password"] == "12345":
+        return Response(status=200)
+    else:
+        return Response(status=400)
+
+@app.route('/test/add_admin')
+@cross_origin()
+def test_add_admin():
+    return Response(status=500)
+
+@app.route('/test/add_poll')
+@cross_origin()
+def test_add_poll():
+    return Response(status=409)
 
 ###################################################### \erase
 
