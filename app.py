@@ -112,7 +112,7 @@ def filter_users_by_answers(predicate: str) -> list:  # get back only users afte
     if predicate is None or not predicate:
         return all_users
     else:
-        pred = [(int(qna.split(',')[0]), qna.split(',')[1].replace(' ', '_')) for qna in predicate.split('$')]
+        pred = [(int(qna.split(',')[0]), qna.split(',')[1].replace(' ', '_')) for qna in predicate.split('$') if qna != '']
         partial_group_users = all_users
         for qna in pred:
             partial_group_users = intersection(partial_group_users, Answer.users_that_answered_a_on_q(qna[0], qna[1]))
@@ -145,7 +145,7 @@ def handle_answer_poll():
             return Response("This in not a possible answer for this poll.", status=400)
 
         Answer.update_user_answer(chat_id, answered_poll, requested_answer)
-        return Response(f"We have received your response:\n({requested_answer})\nThank you for participating", status=200)
+        return Response(f"We have received your response:\n({requested_answer.replace('_', ' ')})\nThank you for participating", status=200)
     except:
         return Response("Unexpected error", status=500)
 
@@ -180,6 +180,7 @@ def handle_add_poll():
 
 @app.route('/get_polls')
 @cross_origin()
+# @login_required
 def handle_get_polls():  # return dict {questions: list[]} where list is of (poll_id, poll_content)
     """ Return all polls recorded in system, for displaying in UI """
     try:
@@ -193,6 +194,7 @@ def handle_get_polls():  # return dict {questions: list[]} where list is of (pol
 # @login_required
 def handle_get_info_about_poll(poll_id) -> list[[str, int]]:
     """ Return answer count for each possible answer of the poll with id <poll_id> """
+    print("x")
     try:
         if int(poll_id) not in Poll.get_all_polls_id():
             return {}
@@ -225,11 +227,11 @@ def login():
         if admin is None:
             return Response("No admin under this username.", status=404)
         if Admin.authenticate_admin(existing_admin_name, existing_admin_password):
-            # login_user(admin.username)
+            login_user(admin)
             return Response(f"Admin {existing_admin_name} Successfully logged-in.", status=200)
         else:
             return Response(f"Admin {existing_admin_name} logging-in failed.", status=401)
-    except:
+    except Exception as e:
         return Response("Unexpected error", status=500)
 
 @app.route('/logout')
@@ -237,7 +239,7 @@ def login():
 # @login_required
 def logout():
     try:
-        # logout_user()
+        logout_user()
         return Response(f"Successfully logged-out.", status=200)
     except:
         return Response("Unexpected error", status=500)
@@ -263,43 +265,43 @@ QUESTIONS = [
 ]
 
 
-@app.route('/test/logout')
-@cross_origin()
-def test_get_polls():
-    logout_user()
-    pass
+# @app.route('/test/logout')
+# @cross_origin()
+# def test_get_polls():
+#     logout_user()
+#     pass
 
 
-@app.route('/test/get_polls')
-@cross_origin()
-def test_get_polls():
-    return {"questions": QUESTIONS}
-
-
-@app.route('/test/poll_info/<id>')
-@cross_origin()
-def test_poll_info(id):
-    return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
-
-
-@app.route('/test/login')
-@cross_origin()
-def test_login():
-    if request.headers["username"] == "yaniv" and request.headers["password"] == "123":
-        login_user(Admin.get_by_name("yaniv"))
-        return Response(status=200)
-    else:
-        return Response(status=400)
-
-@app.route('/test/add_admin')
-@cross_origin()
-def test_add_admin():
-    return Response(status=500)
-
-@app.route('/test/add_poll')
-@cross_origin()
-def test_add_poll():
-    return Response(status=409)
+# @app.route('/test/get_polls')
+# @cross_origin()
+# def test_get_polls():
+#     return {"questions": QUESTIONS}
+#
+#
+# @app.route('/test/poll_info/<id>')
+# @cross_origin()
+# def test_poll_info(id):
+#     return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
+#
+#
+# @app.route('/test/login')
+# @cross_origin()
+# def test_login():
+#     if request.headers["username"] == "yaniv" and request.headers["password"] == "123":
+#         login_user(Admin.get_by_name("yaniv"))
+#         return Response(status=200)
+#     else:
+#         return Response(status=400)
+#
+# @app.route('/test/add_admin')
+# @cross_origin()
+# def test_add_admin():
+#     return Response(status=500)
+#
+# @app.route('/test/add_poll')
+# @cross_origin()
+# def test_add_poll():
+#     return Response(status=409)
 
 ###################################################### \erase
 
