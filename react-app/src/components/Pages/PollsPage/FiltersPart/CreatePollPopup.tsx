@@ -1,3 +1,4 @@
+import { async } from "q";
 import React, { useEffect, useState } from "react";
 import { string } from "yargs";
 import { server_url } from "../../../../app-constants";
@@ -28,14 +29,14 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
         return res;
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if(question === "") {
             alert("Your Question is empty");
         } else {
             if(answer1 === "" || answer2 === "") {
                 alert("You have to fill at least 2 answers");
             } else {
-                fetch(`${server_url}/add_poll`,
+                await fetch(`${server_url}/add_poll`,
                 {
                     method: 'GET',
                     headers: {

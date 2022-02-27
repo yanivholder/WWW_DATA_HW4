@@ -5,6 +5,7 @@ import { Question, Filter } from '../../../../types';
 import { PollButton } from './PollButton';
 import { Filters } from '../FiltersPart/Filters'
 import { server_url } from '../../../../app-constants';
+import { async } from 'q';
 
 export interface PollsProps {
     filters: Filter[];
@@ -18,19 +19,24 @@ export const Polls: React.FC<PollsProps> = ({
    const [questions, setQuestions] = useState<Question[]>([]);
 
    useEffect(() => {
-       fetch(`${server_url}/get_polls`)
-       .then(data => data.json())
-       .then(data => { 
-           let typeQuestions: Question[] = [];
-           data.questions.forEach((element: any) => {
-                const newQuestion: Question = {
-                    pollID: (element[0] as number),
-                    content: (element[1] as string)
-                }
-                typeQuestions.push(newQuestion);
-           });
-           setQuestions(typeQuestions);
-        });
+       (async function asyncFunc() {
+            await fetch(`${server_url}/get_polls`)
+            .then(data => data.json())
+            .then(data => { 
+                let typeQuestions: Question[] = [];
+                data.questions.forEach((element: any) => {
+                        const newQuestion: Question = {
+                            pollID: (element[0] as number),
+                            content: (element[1] as string)
+                        }
+                        typeQuestions.push(newQuestion);
+                });
+                setQuestions(typeQuestions);
+            })
+            .catch(e => {
+                alert("A problem occured");
+            });
+        }) ();
    }, []);
 
     return (

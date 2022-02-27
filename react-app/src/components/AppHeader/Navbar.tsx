@@ -1,4 +1,5 @@
-import { longStackSupport } from 'q';
+import { restElement } from '@babel/types';
+import { async, longStackSupport } from 'q';
 import React from 'react';
 import { pages, server_url } from '../../app-constants';
 import '../../App.css';
@@ -43,11 +44,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         }   
     }
 
-    const handleLogout = () => {
-        fetch(`${server_url}/logout`);
-        // Check response
-        changePage(4);
-        setIsLoggedIn(false);
+    const handleLogout = async () => {
+        await fetch(`${server_url}/logout`)
+        .then(resp => {
+            if(resp.status === 200) {
+                changePage(4);
+                setIsLoggedIn(false);
+            } else {
+                alert("A problem occured");
+            }
+        });
+        
     }
     const handleLogin = () => {
         changePage(4);

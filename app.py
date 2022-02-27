@@ -290,13 +290,12 @@ def test_login():
 @app.route('/test/add_admin')
 @cross_origin()
 def test_add_admin():
-    return Response(status=200)
+    return Response(status=500)
 
 @app.route('/test/add_poll')
 @cross_origin()
 def test_add_poll():
-    print(request.headers)
-    return Response(status=200)
+    return Response(status=409)
 
 ###################################################### \erase
 

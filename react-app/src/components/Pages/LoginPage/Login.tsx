@@ -22,10 +22,10 @@ export const Login: React.FC<LoginProps> = ({
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
-    const handleLogin = (e: any) => {
+    const handleLogin = async (e: any) => {
         e.preventDefault();
         
-        fetch(`${server_url}/login`,
+        await fetch(`${server_url}/login`,
             {
                 method: 'GET',
                 headers: {
@@ -38,7 +38,11 @@ export const Login: React.FC<LoginProps> = ({
             if(resp.status === 200) {
                 setIsLoggedIn(true);
                 setPage(0);
-            } 
+            } else if(resp.status === 404) {
+                alert("No admin under this username");
+            } else if(resp.status === 401) {
+                alert("Admin logging-in failed");
+            }
             else {
                 alert("username or password are incorrect");
             }

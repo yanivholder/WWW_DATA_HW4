@@ -22,8 +22,7 @@ export const Popup: React.FC<PopupProps> = ({
     useEffect(() => {
         fetch(`${server_url}/poll_info/${question.pollID}`)
         .then(data => data.json())
-        .then(data => { 
-            console.log(data.data);
+        .then(data => {
             let answerInfoList: AnswerInfo[] = [];
             data.data.forEach((element: any) => {
                  const newAnswerInfo: AnswerInfo = {
@@ -33,7 +32,10 @@ export const Popup: React.FC<PopupProps> = ({
                  answerInfoList.push(newAnswerInfo);
             });
             setQuestionInfo(answerInfoList);
-         });
+         })
+        .catch(e => {
+          alert("A problem occured");
+        });
     }, []);
 
     const handleAnswerSelect = (answerInfo: AnswerInfo) => {
