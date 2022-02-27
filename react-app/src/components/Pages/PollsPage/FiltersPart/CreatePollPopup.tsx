@@ -25,7 +25,7 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
     const createFiltersString = (): string => {
         let res: string = "";
         filters.forEach(filter => 
-            res = res.concat(`${filter.pollID},${filter.answer} `));
+            res = res.concat(`${filter.pollID},${filter.answer}$`));
         return res;
     }
 
