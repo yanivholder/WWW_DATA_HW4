@@ -38,7 +38,7 @@ export const Login: React.FC<LoginProps> = ({
             return;
         }
         
-        await fetch(`${server_url}/login`,
+        await fetch(`${server_url}/test/login`,
             {
                 method: 'GET',
                 headers: {

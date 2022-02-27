@@ -34,7 +34,7 @@ export const Polls: React.FC<PollsProps> = ({
                 setQuestions(typeQuestions);
             })
             .catch(e => {
-                alert("A problem occured");
+                alert("A problem occured with uploading polls");
             });
         }) ();
    }, []);
