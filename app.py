@@ -1,25 +1,24 @@
 import telegram
 from flask import Flask, request, Response
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram_bot import bot
-from models import db, User, Poll, Answer, Admin
 from flask_login import LoginManager, login_required, login_user, logout_user
 from flask_cors import cross_origin
 
-from config import POSTGRES_CONFIG
+from telegram_bot import bot
+from models import db, User, Poll, Answer, Admin
+from config import POSTGRES_CONFIG, flask_secret_key
 
 app = Flask(__name__)
+app.secret_key = flask_secret_key
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 login_manager = LoginManager()
-login_manager.session_protection = 'strong'
-login_manager.login_view = 'login'
 login_manager.init_app(app)
 
 
 @login_manager.user_loader
-def load_user(admin_id):
-    return Admin.query.get(int(admin_id))
+def load_user(admin_name):
+    return Admin.get_by_name(admin_name)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'''
@@ -28,10 +27,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'''
 
 db.init_app(app)
 
-
-@app.route('/')
-def index():
-    return '<h1>The site is not implemented yet</h1>'
 
 @app.route('/register')
 def register_request():
@@ -267,6 +262,7 @@ def page_not_found(e):
     return Response("500 Internal Error", status=404)
 
 
+############################################### TODO: erase
 
 QUESTIONS = [
     (1, "What is your eyes color"),
@@ -274,7 +270,14 @@ QUESTIONS = [
     (3, "How much legs 4 spiders and two people have?")
 ]
 
-############################################### TODO: erase
+
+@app.route('/test/logout')
+@cross_origin()
+def test_get_polls():
+    logout_user()
+    pass
+
+
 @app.route('/test/get_polls')
 @cross_origin()
 def test_get_polls():
@@ -291,6 +294,7 @@ def test_poll_info(id):
 @cross_origin()
 def test_login():
     if request.headers["username"] == "yaniv" and request.headers["password"] == "123":
+        login_user(Admin.get_by_name("yaniv"))
         return Response(status=200)
     else:
         return Response(status=400)

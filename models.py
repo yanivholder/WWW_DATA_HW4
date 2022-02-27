@@ -212,6 +212,9 @@ class Admin(UserMixin, db.Model):
     def __repr__(self):
         return f'<Admin {self.username}'
 
+    def get_id(self):
+        return self.username
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
