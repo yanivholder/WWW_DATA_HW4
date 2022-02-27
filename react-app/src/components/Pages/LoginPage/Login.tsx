@@ -24,6 +24,19 @@ export const Login: React.FC<LoginProps> = ({
 
     const handleLogin = async (e: any) => {
         e.preventDefault();
+
+        if(
+            (username.length < 3) ||
+            (username.length > 10) ||
+            (!username.match("^[A-Za-z0-9]+$")) ||
+            (!username.charAt(0).match("^[A-Za-z]+$")) ||
+            (password.length < 5) ||
+            (password.length > 12) ||
+            (!password.match("^[A-Za-z0-9!@#$%^&*]+$"))
+            ) {
+            alert("username or password are incorrect");
+            return;
+        }
         
         await fetch(`${server_url}/login`,
             {

@@ -22,6 +22,14 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
     const [answer3, setAnswer3] = useState<string>("");
     const [answer4, setAnswer4] = useState<string>("");
 
+    let answerArray: string[] = [answer1, answer2];
+    if(answer3 !== "") {
+        answerArray.push(answer3);
+    }
+    if(answer4 !== "") {
+        answerArray.push(answer4);
+    }
+
     const createFiltersString = (): string => {
         let res: string = "";
         filters.forEach(filter => 
@@ -29,37 +37,52 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
         return res;
     }
 
+    const QuestionAndAnswerValidation = (element: string) => {
+        return ((element.length <= 30) && (element.match("^[A-Za-z0-9]*$")));
+    }
+
     const handleSubmit = async () => {
         if(question === "") {
             alert("Your Question is empty");
-        } else {
-            if(answer1 === "" || answer2 === "") {
-                alert("You have to fill at least 2 answers");
-            } else {
-                await fetch(`${server_url}/add_poll`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'question': question,
-                        'answer1': answer1,
-                        'answer2': answer2,
-                        'answer3': answer3,
-                        'answer4': answer4,
-                        'filters': createFiltersString(),
-                        'Content-Type': 'application/json'   
-                    }
-                })
-                .then(resp => {
-                    if(resp.status === 200) {
-                        alert("Poll created successfully");
-                        setFilters([]);
-                        handleClose();
-                    } 
-                    else {
-                        alert("A problem occured");
-                    }
-                }); 
-            }
+        } 
+        else if(answer1 === "" || answer2 === "") {
+            alert("You have to fill at least 2 answers");
+        } else if(
+                    (!QuestionAndAnswerValidation(question)) ||
+                    (!QuestionAndAnswerValidation(answer1)) ||
+                    (!QuestionAndAnswerValidation(answer2)) ||
+                    (!QuestionAndAnswerValidation(answer3)) ||
+                    (!QuestionAndAnswerValidation(answer4))
+                ) {
+            alert("The question and the answers should contain only letters and numner and be at max 30 characters");
+        }
+        else if(new Set(answerArray).size !== answerArray.length) {
+            alert("All answers must be different");
+        }
+        else {
+            await fetch(`${server_url}/add_poll`,
+            {
+                method: 'GET',
+                headers: {
+                    'question': question,
+                    'answer1': answer1,
+                    'answer2': answer2,
+                    'answer3': answer3,
+                    'answer4': answer4,
+                    'filters': createFiltersString(),
+                    'Content-Type': 'application/json'   
+                }
+            })
+            .then(resp => {
+                if(resp.status === 200) {
+                    alert("Poll created successfully");
+                    setFilters([]);
+                    handleClose();
+                } 
+                else {
+                    alert("A problem occured");
+                }
+            }); 
         }
     }
 
