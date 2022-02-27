@@ -110,7 +110,7 @@ export const CreateAdmin = () => {
                 </div>
             </form>
             <h2>Current Admins List</h2>
-            <ul style={{textAlign: 'left', marginLeft: '40%'}}>
+            <ul style={{textAlign: 'left', marginLeft: '47%'}}>
             {
                 admins.length > 0 ?
                 admins.map(admin =>

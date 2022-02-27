@@ -28,13 +28,13 @@ def flask_run() -> None:
             db.create_all()
             db.session.commit()
             Admin.register_super_admin(db)
-    # else:
-        # with app.app_context():
-            # db.drop_all()
-            # db.create_all()
-            # db.session.commit()
-            # Admin.register_super_admin(db)
-        # print("db exists")
+    else:
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
+            db.session.commit()
+            Admin.register_super_admin(db)
+        print("db exists")
     app.run()
 
 
@@ -44,7 +44,7 @@ class TelegramThread(threading.Thread):
 
 
 def run_react():
-    os.chdir(r'C:\Users\eilon\Desktop\Technion\semester6\WWW\WWW_DATA_HW4\react-app')
+    os.chdir(r'.\react-app')
     subprocess.check_call('npm install', shell=True)
     subprocess.check_call('npm start', shell=True)
 
