@@ -8,12 +8,14 @@ export interface CreatePollPopupProps {
     handleClose: any;
     filters: Filter[];
     setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
+    getPolls: any;
 }
 
 export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
     handleClose,
     filters,
-    setFilters
+    setFilters,
+    getPolls
 }) => {
 
     const [question, setQuestion] = useState<string>("");
@@ -37,8 +39,8 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
         return res;
     }
 
-    const QuestionAndAnswerValidation = (element: string) => {
-        return ((element.length <= 30) && (element.match("^[A-Za-z0-9?]*$")));
+    const QuestionAndAnswerNotValid = (element: string) => {
+        return ((element.length > 30) || (element !== "" && (!element.match("^[A-Za-z0-9\? -]+$"))));
     }
 
     const handleSubmit = async () => {
@@ -48,13 +50,13 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
         else if(answer1 === "" || answer2 === "") {
             alert("You have to fill at least 2 answers");
         } else if(
-                    (!QuestionAndAnswerValidation(question)) ||
-                    (!QuestionAndAnswerValidation(answer1)) ||
-                    (!QuestionAndAnswerValidation(answer2)) ||
-                    (!QuestionAndAnswerValidation(answer3)) ||
-                    (!QuestionAndAnswerValidation(answer4))
+                    (QuestionAndAnswerNotValid(question)) ||
+                    (QuestionAndAnswerNotValid(answer1)) ||
+                    (QuestionAndAnswerNotValid(answer2)) ||
+                    (QuestionAndAnswerNotValid(answer3)) ||
+                    (QuestionAndAnswerNotValid(answer4))
                 ) {
-            alert("The question and the answers should contain only letters and number, and ?. Also, is can be at max 30 characters");
+            alert("The question and the answers should contain only letters and number, '-', and '?'. Also, is can be at max 30 characters");
         }
         else if(new Set(answerArray).size !== answerArray.length) {
             alert("All answers must be different");
@@ -75,8 +77,8 @@ export const CreatePollPopup: React.FC<CreatePollPopupProps> = ({
             })
             .then(resp => {
                 if(resp.status === 200) {
-                    alert("Poll created successfully");
                     setFilters([]);
+                    getPolls();
                     handleClose();
                 } 
                 else {

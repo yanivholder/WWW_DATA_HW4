@@ -11,7 +11,7 @@ class User(db.Model):
     id = db.Column(db.String, primary_key=True)
     username = db.Column(db.String(64), unique=False, index=False)
     live = db.Column(db.Boolean(64), unique=False, index=False)
-    answers = db.relationship('Answer', backref='user')
+    answers = db.relationship('Answer', backref='user', cascade="all,delete")
 
     def __repr__(self):
         return f'<User {self.username}'
@@ -79,7 +79,7 @@ class Poll(db.Model):
     possible_answers = db.Column(db.String, unique=False, index=False, nullable=False)
     PrimaryKeyConstraint(poll_id)
     CheckConstraint(poll_id > 0)
-    answers = db.relationship('Answer', backref='poll')
+    answers = db.relationship('Answer', backref='poll', cascade="all,delete")
 
     def __repr__(self):
         return f'<Poll {self.content}'
@@ -141,11 +141,18 @@ class Poll(db.Model):
             db.session.commit()
         return current_poll_id
 
+    @staticmethod
+    def remove_poll(poll_id):
+        Answer.query.filter_by(poll_id=poll_id).delete()
+        Poll.query.filter_by(poll_id=poll_id).delete()
+        db.session.commit()
+        return True
+
 
 class Answer(db.Model):
     __tablename__ = 'answers'
-    user_id = db.Column(db.String, db.ForeignKey(User.id), unique=False)
-    poll_id = db.Column(db.Integer, db.ForeignKey(Poll.poll_id), unique=False, index=False)
+    user_id = db.Column(db.String, db.ForeignKey(User.id, ondelete='CASCADE'), unique=False)
+    poll_id = db.Column(db.Integer, db.ForeignKey(Poll.poll_id, ondelete='CASCADE'), unique=False, index=False)
     answer = db.Column(db.String, unique=False, index=False)
     PrimaryKeyConstraint(user_id, poll_id)
 
@@ -205,12 +212,6 @@ class Answer(db.Model):
             ret.append((pos_ans.replace('_', ' '), len(Answer.users_that_answered_a_on_q(poll_id, pos_ans))))
         return ret
 
-    @staticmethod
-    def remove_poll(poll_id):
-        Poll.query.filter_by(poll_id=poll_id).delete()
-        Answer.query.filter_by(poll_id=poll_id).delete()
-        db.session.commit()
-
 
 class Admin(UserMixin, db.Model):
     # admin_unique_id_counter = 1000000
@@ -266,3 +267,8 @@ class Admin(UserMixin, db.Model):
     @staticmethod
     def get_by_name(admin_name):
         return db.session.query(Admin).filter_by(username=admin_name).first()
+
+    @staticmethod
+    def get_all_admin_names():
+        admins = db.session.query(Admin).filter().all()
+        return [admin.username for admin in admins]

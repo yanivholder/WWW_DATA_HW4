@@ -7,12 +7,14 @@ export interface PollButtonProps {
     question: Question;
     filters: Filter[];
     setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
+    getPolls: any;
 }
 
 export const PollButton: React.FC<PollButtonProps> = ({
     question,
     filters,
-    setFilters
+    setFilters,
+    getPolls
 }) => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -38,6 +40,7 @@ export const PollButton: React.FC<PollButtonProps> = ({
                     filters={filters}
                     setFilters={setFilters}
                     question={question}
+                    getPolls={getPolls}
                 />
             }
         </div>

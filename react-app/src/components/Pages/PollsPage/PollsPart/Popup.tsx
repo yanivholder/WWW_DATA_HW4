@@ -8,13 +8,15 @@ export interface PopupProps {
     filters: Filter[];
     setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
     question: Question;
+    getPolls: any;
 }
 
 export const Popup: React.FC<PopupProps> = ({
     handleClose,
     filters,
     setFilters,
-    question
+    question,
+    getPolls
 }) => {
 
     const [questionInfo, setQuestionInfo] = useState<AnswerInfo[]>([]);
@@ -58,7 +60,8 @@ export const Popup: React.FC<PopupProps> = ({
       fetch(`${server_url}/remove_poll/${question.pollID}`)
       .then(resp => {
           if(resp.status === 200) {
-              alert("Poll removed successfully");
+              getPolls();
+              handleClose();
           }
           else {
               alert("A problem occured");
@@ -69,7 +72,7 @@ export const Popup: React.FC<PopupProps> = ({
     return (
     <div className="popup-box">
       <div className="box">
-        <button style={{float: 'right', background: '#cc0c0c'}} onClick={() => handleRemovePoll}>
+        <button style={{float: 'right', background: '#cc0c0c'}} onClick={() => handleRemovePoll()}>
           Remove Poll
         </button>
         <h2 style={{marginBottom: '20px', marginTop: '0', textDecoration: 'underline'}}>

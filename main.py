@@ -28,12 +28,13 @@ def flask_run() -> None:
             db.create_all()
             db.session.commit()
             Admin.register_super_admin(db)
-    else:
-        with app.app_context():
-            db.drop_all()
-            db.create_all()
-            db.session.commit()
-        print("db exists")
+    # else:
+        # with app.app_context():
+            # db.drop_all()
+            # db.create_all()
+            # db.session.commit()
+            # Admin.register_super_admin(db)
+        # print("db exists")
     app.run()
 
 

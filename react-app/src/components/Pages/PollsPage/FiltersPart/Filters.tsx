@@ -8,10 +8,12 @@ import { CreatePollPopup } from './CreatePollPopup'
 export interface FiltersProps {
     filters: Filter[];
     setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
+    getPolls: any;
 }
 export const Filters: React.FC<FiltersProps> = ({
     filters,
-    setFilters
+    setFilters,
+    getPolls
 }) => {
 
     const [isCreatePollOpen, setIsCreatePollOpen] = useState<boolean>(false);
@@ -56,6 +58,7 @@ export const Filters: React.FC<FiltersProps> = ({
                     handleClose={handleCreatePoll}
                     filters={filters}
                     setFilters={setFilters}
+                    getPolls={getPolls}
                 />
             }
         </div>

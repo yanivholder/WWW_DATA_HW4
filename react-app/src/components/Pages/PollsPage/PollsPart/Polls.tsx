@@ -18,25 +18,27 @@ export const Polls: React.FC<PollsProps> = ({
 
    const [questions, setQuestions] = useState<Question[]>([]);
 
-   useEffect(() => {
-       (async function asyncFunc() {
-            await fetch(`${server_url}/get_polls`)
-            .then(data => data.json())
-            .then(data => { 
-                let typeQuestions: Question[] = [];
-                data.questions.forEach((element: any) => {
-                        const newQuestion: Question = {
-                            pollID: (element[0] as number),
-                            content: (element[1] as string)
-                        }
-                        typeQuestions.push(newQuestion);
-                });
-                setQuestions(typeQuestions);
-            })
-            .catch(e => {
-                alert("A problem occured");
+   const getPolls = async () => {
+        await fetch(`${server_url}/get_polls`)
+        .then(data => data.json())
+        .then(data => { 
+            let typeQuestions: Question[] = [];
+            data.questions.forEach((element: any) => {
+                    const newQuestion: Question = {
+                        pollID: (element[0] as number),
+                        content: (element[1] as string)
+                    }
+                    typeQuestions.push(newQuestion);
             });
-        }) ();
+            setQuestions(typeQuestions);
+        })
+        .catch(e => {
+            alert("A problem occured");
+        });
+    }
+
+   useEffect(() => {
+    getPolls();
    }, []);
 
     return (
@@ -44,8 +46,9 @@ export const Polls: React.FC<PollsProps> = ({
             <Filters
                 filters={filters}
                 setFilters={setFilters}
+                getPolls={getPolls}
             />
-            <h2> Polls Questions </h2>
+            <h2 style={{fontSize: 'xx-large'}}> Polls </h2>
             <div className='polls-buttons-tab'> 
             {
                 questions.length > 0 ?
@@ -55,9 +58,10 @@ export const Polls: React.FC<PollsProps> = ({
                             question={question}
                             filters={filters}
                             setFilters={setFilters}
+                            getPolls={getPolls}
                         />)
                 :
-                <h2> No Polls Created Yet </h2>
+                <h2 style={{color: "#999", marginTop: '10%'}}> No Polls Created Yet </h2>
             }
             </div>        
         </div>

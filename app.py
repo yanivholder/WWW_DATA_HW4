@@ -181,7 +181,8 @@ def handle_add_poll():
 # @login_required
 def handle_remove_poll(poll_id):
     try:
-        Poll.remove_poll(poll_id)
+        if Poll.remove_poll(poll_id):
+            return Response("Poll successfully removed", status=200)
     except Exception as e:
         return Response(f"Unexpected error", status=500)
 
@@ -201,7 +202,6 @@ def handle_get_polls():  # return dict {questions: list[]} where list is of (pol
 # @login_required
 def handle_get_info_about_poll(poll_id) -> list[[str, int]]:
     """ Return answer count for each possible answer of the poll with id <poll_id> """
-    print("x")
     try:
         if int(poll_id) not in Poll.get_all_polls_id():
             return {}
@@ -251,6 +251,26 @@ def logout():
     except:
         return Response("Unexpected error", status=500)
 
+
+@app.route('/get_all_admins')
+@cross_origin()
+# @login_required
+def handle_get_admins():
+    try:
+        return {'admins': Admin.get_all_admin_names()}
+    except:
+        return Response("Unexpected error", status=500)
+
+
+@app.route('/get_all_active_users')
+@cross_origin()
+# @login_required
+def handle_get_users():
+    try:
+        return {'users': User.get_all_active_users()}
+    except:
+        return Response("Unexpected error", status=500)
+
 # Error handlers
 
 @app.errorhandler(404)
@@ -259,6 +279,8 @@ def page_not_found(e):
 
 
 @app.errorhandler(500)
+
+
 def page_not_found(e):
     return Response("500 Internal Error", status=404)
 
