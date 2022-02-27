@@ -35,7 +35,7 @@ export const CreateAdmin = () => {
         }
         // TODO: add salt to password
         else {
-            fetch(`${server_url}/test/add_admin`,
+            await fetch(`${server_url}/test/add_admin`,
             {
                 method: 'GET',
                 headers: {
@@ -48,9 +48,12 @@ export const CreateAdmin = () => {
                 if(resp.status === 200) {
                     alert("Admin created successfully");
                 } 
+                else if(resp.status === 409) {
+                    alert("This admin username is taken. Please select a different name.");
+                }
                 else {
                     alert("A problem occured");
-                }
+                }    
             });
         }
     }

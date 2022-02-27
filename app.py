@@ -217,6 +217,7 @@ def handle_get_polls():  # return dict {questions: list[]} where list is of (pol
     except:
         return Response("Unexpected error", status=500)
 
+
 @app.route('/poll_info/<poll_id>')
 @login_required
 def handle_get_info_about_poll(poll_id) -> dict[str: int]:
@@ -281,6 +282,7 @@ def test_get_polls():
 
 
 @app.route('/test/poll_info/<id>')
+@cross_origin()
 def test_poll_info(id):
     return {"data": [("White", 3), ("Blue", 5), ("Brown", 0), ("Yellow", 2), ("N/A", 23)]}
 
@@ -294,13 +296,14 @@ def test_login():
         return Response(status=400)
 
 @app.route('/test/add_admin')
+@cross_origin()
 def test_add_admin():
-    return Response(status=200)
+    return Response(status=500)
 
 @app.route('/test/add_poll')
+@cross_origin()
 def test_add_poll():
-    print(request.headers)
-    return Response(status=200)
+    return Response(status=409)
 
 ###################################################### \erase
 
