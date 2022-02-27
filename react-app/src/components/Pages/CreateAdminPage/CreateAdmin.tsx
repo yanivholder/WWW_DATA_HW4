@@ -1,6 +1,6 @@
 import { response } from 'express';
 import { async } from 'q';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { server_url } from '../../../app-constants';
 import '../../../App.css';
 
@@ -10,6 +10,7 @@ export const CreateAdmin = () => {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
+    const [admins, setAdmins] = useState<string[]>([]);
 
     const handleCreateAdmin = async (e: any) => {
         e.preventDefault();
@@ -46,6 +47,7 @@ export const CreateAdmin = () => {
             .then(resp => {
                 if(resp.status === 200) {
                     alert("Admin created successfully");
+                    getAdmins();
                 } 
                 else if(resp.status === 409) {
                     alert("This admin username is taken. Please select a different name.");
@@ -56,6 +58,27 @@ export const CreateAdmin = () => {
             });
         }
     }
+
+    const getAdmins = async () => {
+        await fetch(`${server_url}/get_all_admins`)
+        .then(data => data.json())
+        .then(data => { 
+            let adminsList: string[] = [];
+            data.admins.forEach((element: any) => {
+                    const newAdmin: string = (
+                        element as string);
+                        adminsList.push(newAdmin);
+            });
+            setAdmins(adminsList);
+        })
+        .catch(e => {
+            alert("A problem occured with uploading admins list");
+        });
+    }
+
+    useEffect(() => {
+        getAdmins();
+    }, []);
 
     return(
         <div id="login-form">
@@ -86,6 +109,18 @@ export const CreateAdmin = () => {
                     <button type="submit">Create</button>
                 </div>
             </form>
+            <h2>Current Admins List</h2>
+            <ul style={{textAlign: 'left', marginLeft: '40%'}}>
+            {
+                admins.length > 0 ?
+                admins.map(admin =>
+                    <li style={{}}>
+                        {admin}
+                    </li>)
+            :
+            <h2> No Admins Created Yet </h2>
+            }
+            </ul>
         </div>
     )    
 }
